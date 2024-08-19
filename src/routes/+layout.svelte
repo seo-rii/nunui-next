@@ -24,7 +24,7 @@
         children
     } = $props();
 
-    let mobile = $state(true);
+    let mobile = $state(false);
     let dark = $state(false);
 </script>
 

@@ -12,7 +12,7 @@
     })
 </script>
 
-<div style="width:500px;height:500px;border: 1px solid var(--primary-light2);border-radius: 12px">
+<div style="width:500px;height:500px;max-width: 100vw;border: 1px solid var(--primary-light2);border-radius: 12px">
     <Ripple/>
 </div>
 <Button icon="favorite" {outlined} onclick={() => flag++}>sdfsdfsdf</Button>

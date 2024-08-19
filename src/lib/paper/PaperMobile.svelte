@@ -44,8 +44,8 @@
                 else {
                     const ret = () => {
                         delta *= 0.8;
-                        dx *= 0.86;
-                        if (dx < 0.1) dx = 0;
+                        dx *= 0.8;
+                        if (Math.abs(dx) < 0.1) dx = 0;
                         if (delta < 1) delta = 0;
                         if (delta || dx) requestAnimationFrame(ret);
                     }
@@ -56,7 +56,7 @@
         return () => handlers.forEach((h) => h());
     })
 
-    const vx = $derived(dx > 0 ? Math.pow(dx, 0.5) : -Math.pow(-dx, 0.5));
+    const vx = $derived(dx > 0 ? Math.pow(dx, 0.3) : -Math.pow(-dx, 0.3));
 </script>
 
 <div class="scrim" class:show></div>

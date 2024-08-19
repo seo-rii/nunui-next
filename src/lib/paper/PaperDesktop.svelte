@@ -1,4 +1,6 @@
 <script lang="ts">
+    import {flushSync} from "svelte";
+
     let {
         children,
         show = $bindable(false),
@@ -6,9 +8,39 @@
         tl, tc, tr, ml, mr, bl, bc, br,
         ...rest
     } = $props();
+
+    let target = $state<HTMLDivElement>(null);
+    let mh = $state('100vh'), mw = $state('100vw');
+
+    $effect(() => {
+        const {top, left, bottom, right} = target.parentElement.getBoundingClientRect();
+
+        mh = '100vh';
+        mw = '100vw';
+        flushSync();
+        setTimeout(() => {
+            const {innerHeight, innerWidth} = window;
+            if (tl || tc || tr) {
+                mh = `${top - 12}px`;
+            } else if (bl || bc || br) {
+                mh = `${innerHeight - bottom - 12}px`;
+            } else {
+                mh = `${Math.min(top, innerHeight - bottom) - 12}px`;
+            }
+
+            if (tl || ml || bl) {
+                mw = `${innerWidth - left - 12}px`;
+            } else if (tr || mr || br) {
+                mw = `${right - 12}px`;
+            } else {
+                mw = `${Math.min(innerWidth - left, right) - 12}px`;
+            }
+        }, 0)
+    })
 </script>
 
-<main class:exit={!show} {...rest} class:tl class:tc class:tr class:ml class:mr class:bl class:bc class:br>
+<main class:exit={!show} {...rest} class:tl class:tc class:tr class:ml class:mr class:bl class:bc class:br
+      style:max-height={mh} style:max-width={mw} bind:this={target}>
     {@render children()}
 </main>
 
@@ -23,6 +55,7 @@
     --transform: translate(0, 0);
 
     z-index: var(--paper-z-index, 3);
+    overflow: auto;
 
     &.exit {
       animation: hide 0.2s cubic-bezier(1, 0, .67, 1) forwards;
