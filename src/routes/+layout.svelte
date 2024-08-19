@@ -1,6 +1,5 @@
 <script lang="ts">
     import {ThemeProvider} from "$lib";
-    import {browser} from "$app/environment";
 
     const defaultLight = {
         primary: '#6200EE',

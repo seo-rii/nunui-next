@@ -9,7 +9,7 @@
         ...rest
     } = $props();
 
-    let target = $state<HTMLDivElement>(null);
+    let target = $state<HTMLDivElement | null>(null);
     let mh = $state('100vh'), mw = $state('100vw');
 
     $effect(() => {
