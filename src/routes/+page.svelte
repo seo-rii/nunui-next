@@ -1,5 +1,16 @@
 <script lang="ts">
-    import {Button, Ripple, Radio, Input, CircularProgress, Checkbox, LinearProgress, Paper, IconButton} from "$lib";
+    import {
+        Button,
+        Ripple,
+        Radio,
+        Input,
+        CircularProgress,
+        Checkbox,
+        LinearProgress,
+        Paper,
+        IconButton,
+        Expand
+    } from "$lib";
     import {tween} from "$lib/util.svelte.js";
 
     const val = tween(0.5);
@@ -23,6 +34,11 @@
 <Button light-5 icon="star" secondary large onclick={() => flag++}>sdfsdfsdf</Button>
 <Button icon="star" secondary round onclick={() => flag++}>sdfsdfsdf</Button>
 <Button icon="star" secondary round onclick={() => flag++}/>
+<Expand hide={flag % 2}>
+    fsasdfasfasfasdfsad<br>
+    fsasdfasfasfasdfsad<br>
+    fsasdfasfasfasdfsad<br>
+</Expand>
 <LinearProgress progress={val.value} indeterminate={flag % 2}/>
 <LinearProgress progress={val.value} indeterminate={flag % 2 === 0} secondary/>
 <IconButton icon="favorite" label="즐겨찾기" flat size="30" onclick={() => flag++} active={flag % 2}/>
