@@ -23,9 +23,11 @@
         children
     } = $props();
 
-    let mobile = $state(false);
+    let innerWidth = $state(0);
+    let mobile = $derived(innerWidth < 600);
     let dark = $state(false);
 </script>
 
+<svelte:window bind:innerWidth/>
 <Button onclick={() => dark = !dark} icon="dark_mode">테마</Button>
 <ThemeProvider {...dark ? defaultDark : defaultLight} {mobile} {children}/>
