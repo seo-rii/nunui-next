@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {ThemeProvider} from "$lib";
+    import {Button, ThemeProvider} from "$lib";
 
     const defaultLight = {
         primary: '#6200EE',
@@ -27,4 +27,5 @@
     let dark = $state(false);
 </script>
 
+<Button onclick={() => dark = !dark} icon="dark_mode">테마</Button>
 <ThemeProvider {...dark ? defaultDark : defaultLight} {mobile} {children}/>

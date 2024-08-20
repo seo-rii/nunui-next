@@ -20,14 +20,15 @@
 
     const style = $derived(`
         :root {
+            --theme: ${primary};
             --primary: ${primary};
-            --theme: ${surface};
             --secondary: ${secondary};
             --surface: ${surface};
             --on-primary: ${onPrimary};
             --on-theme: ${primary};
             --on-secondary: ${onSecondary};
             --on-surface: ${onSurface};
+            transition: --primary 0.2s ease, --secondary 0.2s ease, --surface 0.2s ease, --on-surface 0.2s ease, --on-secondary 0.2s ease;
         }
     `);
 
@@ -48,14 +49,49 @@
                 margin: 0;
                 padding: 0;
                 font-family: 'Roboto', sans-serif;
-                background-color: var(--theme);
+                background-color: var(--surface);
                 color: var(--on-surface);
-                transition: background-color 0.3s, color 0.3s;
             }
         </style>
     {/if}
 
     <style>
+        @property --primary {
+            syntax: '<color>';
+            initial-value: transparent;
+            inherits: true;
+        }
+
+        @property --secondary {
+            syntax: '<color>';
+            initial-value: transparent;
+            inherits: true;
+        }
+
+        @property --surface {
+            syntax: '<color>';
+            initial-value: transparent;
+            inherits: true;
+        }
+
+        @property --on-primary {
+            syntax: '<color>';
+            initial-value: transparent;
+            inherits: true;
+        }
+
+        @property --on-secondary {
+            syntax: '<color>';
+            initial-value: transparent;
+            inherits: true;
+        }
+
+        @property --on-surface {
+            syntax: '<color>';
+            initial-value: transparent;
+            inherits: true;
+        }
+
         *.primary {
             --theme: var(--primary);
             --theme-light1: var(--primary-light1);
