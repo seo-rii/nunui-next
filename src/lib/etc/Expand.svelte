@@ -14,8 +14,9 @@
     let render = delayedToggle(!hide, 0);
 
     $effect(() => {
-        height = hide ? 0 : clientHeight;
         render.v = !hide;
+        flushSync();
+        height = hide ? 0 : clientHeight;
         flushSync();
         active = true;
     })

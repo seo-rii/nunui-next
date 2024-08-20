@@ -34,7 +34,7 @@
 <Button light-5 icon="star" secondary large onclick={() => flag++}>sdfsdfsdf</Button>
 <Button icon="star" secondary round onclick={() => flag++}>sdfsdfsdf</Button>
 <Button icon="star" secondary round onclick={() => flag++}/>
-<Expand hide={flag % 2}>
+<Expand hide={flag % 2 === 1}>
     fsasdfasfasfasdfsad<br>
     fsasdfasfasfasdfsad<br>
     fsasdfasfasfasdfsad<br>
