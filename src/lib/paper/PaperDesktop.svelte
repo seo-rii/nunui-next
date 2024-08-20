@@ -11,12 +11,13 @@
 
     let target = $state<HTMLDivElement | null>(null);
     let mh = $state('100vh'), mw = $state('100vw');
+    let render = $state(false);
+    let scrollX = $state(0), scrollY = $state(0);
 
     $effect(() => {
+        let [_, __] = [scrollX, scrollY];
         const {top, left, bottom, right} = target.parentElement.getBoundingClientRect();
 
-        mh = '100vh';
-        mw = '100vw';
         flushSync();
         setTimeout(() => {
             const {innerHeight, innerWidth} = window;
@@ -28,20 +29,29 @@
                 mh = `${Math.min(top, innerHeight - bottom) - 12}px`;
             }
 
-            if (tl || ml || bl) {
+            if (tl || bl) {
                 mw = `${innerWidth - left - 12}px`;
-            } else if (tr || mr || br) {
+            } else if (tr || br) {
                 mw = `${right - 12}px`;
+            } else if (ml) {
+                mw = `${left - 12}px`;
+            } else if (mr) {
+                mw = `${innerWidth - right - 12}px`;
             } else {
                 mw = `${Math.min(innerWidth - left, right) - 12}px`;
             }
+            flushSync();
+            render = true;
         }, 0)
     })
 </script>
 
+<svelte:window bind:scrollX bind:scrollY/>
 <main class:exit={!show} {...rest} class:tl class:tc class:tr class:ml class:mr class:bl class:bc class:br
       style:max-height={mh} style:max-width={mw} bind:this={target}>
-    {@render children()}
+    {#if render}
+        {@render children()}
+    {/if}
 </main>
 
 <style lang="scss">
@@ -56,6 +66,7 @@
 
     z-index: var(--paper-z-index, 3);
     overflow: auto;
+    overscroll-behavior: contain;
 
     &.exit {
       animation: hide 0.2s cubic-bezier(1, 0, .67, 1) forwards;

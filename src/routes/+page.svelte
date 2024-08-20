@@ -91,7 +91,7 @@
 <CircularProgress secondary progress={0.7} indeterminate={flag % 2}/>
 
 <Input bind:value={flag} placeholder="test" leading="search"
-       trailing={{icon: 'close', onclick: () => flag = 0}}/>
+       trailing={{icon: 'close', onclick: () => flag = 0, tooltip: '초기화'}}/>
 <Input bind:value={flag} placeholder="value" type="number"
        trailing="restart_alt"/>
 <br>
