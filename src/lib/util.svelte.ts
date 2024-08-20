@@ -58,6 +58,13 @@ export function delayedToggle(iv = false, setDelay = 200, clearDelay = 200) {
 	let timer: number,
 		value = $state(iv),
 		realValue = $state(iv);
+
+	const setV = (v: boolean, delay: number) => {
+		clearTimeout(timer);
+		if (!delay) value = v;
+		else timer = setTimeout(() => (value = v), delay);
+	};
+
 	return {
 		get v() {
 			return value;
@@ -67,13 +74,8 @@ export function delayedToggle(iv = false, setDelay = 200, clearDelay = 200) {
 		},
 		set v(v: boolean) {
 			realValue = v;
-			if (v) {
-				clearTimeout(timer);
-				if (!value) timer = setTimeout(() => (value = true), setDelay);
-			} else {
-				clearTimeout(timer);
-				if (value) timer = setTimeout(() => (value = false), clearDelay);
-			}
+			if (v) setV(v, setDelay);
+			else setV(v, clearDelay);
 		},
 		set r(v: boolean) {
 			clearTimeout(timer);

@@ -1,25 +1,27 @@
 <script lang="ts">
     import {delayedToggle} from "$lib/util.svelte.js";
     import {Render} from "$lib";
+    import {flushSync} from "svelte";
 
     let {
         children,
         hide = false,
+        initial = false,
     } = $props();
 
-    let render = delayedToggle(!hide, 0);
     let clientHeight = $state(0), height = $state(0);
-
-    $effect(() => {
-        render.v = !!height;
-    })
+    let active = $state(initial);
+    let render = delayedToggle(!hide, 0);
 
     $effect(() => {
         height = hide ? 0 : clientHeight;
+        render.v = !hide;
+        flushSync();
+        active = true;
     })
 </script>
 
-<main style:height="{height}px">
+<main style:--height="{height}px" class:active>
     {#if render.v}
         <div bind:clientHeight>
             <Render {children}/>
@@ -30,11 +32,15 @@
 <style lang="scss">
   main {
     overflow: hidden;
-    transition: height 0.2s;
     position: relative;
-  }
 
-  div {
-    position: absolute;
+    &.active {
+      transition: height 0.2s;
+      height: var(--height);
+
+      div {
+        position: absolute;
+      }
+    }
   }
 </style>
