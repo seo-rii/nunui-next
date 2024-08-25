@@ -9,7 +9,7 @@
         LinearProgress,
         Paper,
         IconButton,
-        Expand
+        Expand, Select
     } from "$lib";
     import {tween} from "$lib/util.svelte.js";
 
@@ -24,7 +24,7 @@
 </script>
 
 <div style="width:500px;height:500px;max-width: 100vw;border: 1px solid var(--primary-light2);border-radius: 12px">
-    <Ripple/>
+    <Ripple active/>
 </div>
 <Button icon="favorite" {outlined} onclick={() => flag++}>sdfsdfsdf</Button>
 <Button icon="star" secondary {transparent} onclick={() => flag++} tooltip={{tr: true, children: 'test'}}>sdfsdfsdf
@@ -34,11 +34,6 @@
 <Button light-5 icon="star" secondary large onclick={() => flag++}>sdfsdfsdf</Button>
 <Button icon="star" secondary round onclick={() => flag++}>sdfsdfsdf</Button>
 <Button icon="star" secondary round onclick={() => flag++}/>
-<Expand hide={flag % 2 === 1}>
-    fsasdfasfasfasdfsad<br>
-    fsasdfasfasfasdfsad<br>
-    fsasdfasfasfasdfsad<br>
-</Expand>
 <LinearProgress progress={val.value} indeterminate={flag % 2}/>
 <LinearProgress progress={val.value} indeterminate={flag % 2 === 0} secondary/>
 <IconButton icon="favorite" label="즐겨찾기" flat size="30" onclick={() => flag++} active={flag % 2}/>
@@ -96,4 +91,11 @@
        trailing="restart_alt"/>
 <br>
 <Input multiline bind:value={flag} placeholder="test"/>
+<Select placeholder="테스트"></Select>
+
+<Expand hide={flag % 2 === 1}>
+    fsasdfasfasfasdfsad<br>
+    fsasdfasfasfasdfsad<br>
+    fsasdfasfasfasdfsad<br>
+</Expand>
 <!--<Input type="password" bind:value={flag}/>-->

@@ -10,6 +10,7 @@ import ThemeProvider from '$lib/etc/ThemeProvider.svelte';
 import Input from '$lib/form/Input.svelte';
 import Radio from '$lib/form/Radio.svelte';
 import Checkbox from '$lib/form/Checkbox.svelte';
+import Select from '$lib/form/Select.svelte';
 
 import Paper from '$lib/paper/Paper.svelte';
 
@@ -29,5 +30,6 @@ export {
 	Radio,
 	Input,
 	Checkbox,
+	Select,
 	Expand
 };

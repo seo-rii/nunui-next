@@ -67,14 +67,6 @@
     };
 
     $effect(() => {
-        let op, oo;
-        if (adapter.parentElement && !center) {
-            op = adapter.parentElement.style.position
-            oo = adapter.parentElement.style.overflow
-            adapter.parentElement.style.position = "relative";
-            adapter.parentElement.style.overflow = "hidden";
-        }
-
         const handlers = [
             on(container, 'mousemove', showBackground),
             on(container, 'mousedown', showRippleMouse),
@@ -85,17 +77,11 @@
             on(container, 'touchcancel', exitRipple),
         ]
 
-        return () => {
-            handlers.forEach(h => h());
-            if (adapter.parentElement && !center) {
-                if (op) adapter.parentElement.style.position = op;
-                if (oo) adapter.parentElement.style.overflow = oo;
-            }
-        }
+        return () => handlers.forEach(h => h())
     })
 </script>
 
-<main bind:this={adapter} class:show>
+<main bind:this={adapter} class:show class="__rp">
     {#if render.v}
         <div style:left="{x}px" style:top="{y}px" style:--size="{size}px"></div>
     {/if}
@@ -111,6 +97,11 @@
 <style lang="scss">
   * {
     pointer-events: none;
+  }
+
+  :global(*):has(> .__rp) {
+    position: relative;
+    overflow: hidden;
   }
 
   .center {
