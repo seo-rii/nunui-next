@@ -1,9 +1,11 @@
 <script lang="ts">
-    import {setContext} from "svelte";
+    import {setContext, tick} from "svelte";
 
-    let client = $state(false);
+    let server = $state(true), client = $state(false)
+
     $effect(() => {
         client = true
+        tick().then(() => server = false)
     });
 
     let {
@@ -40,9 +42,12 @@
 </script>
 
 <svelte:head>
-    {#key client}
+    {#if server}
         {@html `<style>${style}</style>`}
-    {/key}
+    {/if}
+    {#if client}
+        {@html `<style>${style}</style>`}
+    {/if}
     {#if !local}
         <style>
             body {
