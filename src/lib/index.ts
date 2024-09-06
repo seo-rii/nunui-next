@@ -17,6 +17,8 @@ import Paper from '$lib/paper/Paper.svelte';
 import LinearProgress from '$lib/progress/LinearProgress.svelte';
 import CircularProgress from '$lib/progress/CircularProgress.svelte';
 
+import Table from '$lib/table/Table.svelte';
+
 export {
 	ThemeProvider,
 	Button,
@@ -31,5 +33,6 @@ export {
 	Input,
 	Checkbox,
 	Select,
-	Expand
+	Expand,
+	Table
 };

@@ -9,7 +9,7 @@
         LinearProgress,
         Paper,
         IconButton,
-        Expand, Select
+        Expand, Select, Table
     } from "$lib";
     import {tween} from "$lib/util.svelte.js";
 
@@ -23,6 +23,25 @@
     })
 </script>
 
+
+<Table stickyLeft stickyTop>
+    {#snippet header()}
+        <tr>
+            {#each {length: 4} as _}
+                <th>12345</th>
+            {/each}
+        </tr>
+    {/snippet}
+    <tbody>
+    {#each {length: 100} as _}
+        <tr>
+            {#each {length: 4} as _}
+                <td>123</td>
+            {/each}
+        </tr>
+    {/each}
+    </tbody>
+</Table>
 <div style="width:500px;height:500px;max-width: 100vw;border: 1px solid var(--primary-light2);border-radius: 12px">
     <Ripple active/>
 </div>
