@@ -1,20 +1,32 @@
 <script lang="ts">
-    import {Render, Table} from "$lib";
+    import {Render} from "$lib";
+    import type { HTMLAttributes } from 'svelte/elements';
+
+    interface TableProps extends HTMLAttributes<HTMLTableElement> {
+        style?: string;
+        children?: any;
+        header?: any;
+        stickyTop?: boolean | number;
+        stickyLeft?: boolean | number;
+    }
 
     let {
         style = '',
         children,
         header,
-        stickyTop: _st = false as boolean | number,
-        stickyLeft: _sl = false as boolean | number,
-    } = $props();
+        stickyTop: _st = false,
+        stickyLeft: _sl = false,
+        ...rest
+    }: TableProps = $props();
 
-    let st = $derived(_st || _st === 0), sl = $derived(_sl || _sl === 0);
-    let stv = $derived((_st === true ? 0 : _st || 0) + 'px'), slv = $derived((_sl === true ? 0 : _sl || 0) + 'px');
+    let st = $derived(_st || _st === 0);
+    let sl = $derived(_sl || _sl === 0);
+    let stv = $derived((_st === true ? 0 : _st || 0) + 'px');
+    let slv = $derived((_sl === true ? 0 : _sl || 0) + 'px');
 </script>
 
 <main {style} class:st class:sl style:--stv="{stv}" style:--slv="{slv}">
-    <table>
+    <table {...rest}>
         <thead>
             <Render it={header}/>
         </thead>

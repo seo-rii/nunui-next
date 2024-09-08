@@ -6,10 +6,22 @@
     import Paper from "$lib/paper/Paper.svelte";
     import {classes} from "$lib/util.svelte.js";
 
-    type Props = {
+    interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
         primary?: boolean;
         secondary?: boolean;
-    } & HTMLAttributes<HTMLButtonElement>;
+        icon?: string;
+        outlined?: boolean;
+        transparent?: boolean;
+        raised?: boolean;
+        disabled?: boolean;
+        round?: boolean;
+        small?: boolean;
+        large?: boolean;
+        tooltip?: string | Record<string, any>;
+        active?: boolean;
+        full?: boolean;
+        children?: any;
+    }
 
     let {
         children,
@@ -17,18 +29,14 @@
         icon,
         outlined, transparent, raised,
         disabled,
-
         round,
         small, large,
-
         tooltip,
         active,
         class: className,
-
         full = false,
-
         ...rest
-    } = $props<Props>();
+    }: ButtonProps = $props();
 
     const buttonClass = $derived(classes(className, {
         primary,
@@ -54,8 +62,9 @@
         {/if}
     </button>
 {/snippet}
+
 {#if tooltip}
-    {#if tooltip.children}
+    {#if typeof tooltip === 'object' && tooltip.children}
         <Paper hover mobile={false} {...tooltip} target={button}/>
     {:else}
         <Paper tl hover mobile={false} target={button} children={tooltip}/>

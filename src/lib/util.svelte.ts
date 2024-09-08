@@ -85,7 +85,7 @@ export function delayedToggle(iv = false, setDelay = 200, clearDelay = 200) {
 	};
 }
 
-export function classes(...args: (string | string[] | Record<string, any>)[]) {
+export function classes(...args: (undefined | null | string | string[] | Record<string, any>)[]) {
 	return args
 		.map((x) => {
 			if (typeof x === 'string') return x.split(' ');

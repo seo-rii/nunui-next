@@ -1,7 +1,7 @@
 <script lang="ts">
     let {
-        children,
-        it,
+        children = null as any,
+        it = null as any,
     } = $props();
 
     let target = $derived(children || it);

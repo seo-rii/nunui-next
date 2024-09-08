@@ -1,5 +1,19 @@
 <script lang="ts">
-    import {Ripple, Icon, Paper} from "$lib";
+    import type { HTMLAttributes } from 'svelte/elements';
+    import { Ripple, Icon, Paper } from "$lib";
+
+    interface IconButtonProps extends HTMLAttributes<HTMLButtonElement> {
+        flat?: boolean;
+        disabled?: boolean;
+        secondary?: boolean;
+        primary?: boolean;
+        active?: boolean;
+        outlined?: boolean;
+        icon: string;
+        size?: number | string;
+        label?: string;
+        tooltip?: string | Record<string, any>;
+    }
 
     let {
         flat,
@@ -11,13 +25,13 @@
         icon,
         size,
         label,
-
         tooltip,
         ...rest
-    } = $props();
+    }: IconButtonProps = $props();
 
-    let container = $state(null);
-    let clicked = $state(false), hover = $state(false);
+    let container = $state<HTMLButtonElement | null>(null);
+    let clicked = $state(false);
+    let hover = $state(false);
 </script>
 
 
@@ -32,7 +46,6 @@
                 {#if !disabled}
                     <Ripple center bind:clicked bind:hover {active} extra={container} {primary} {secondary}/>
                 {/if}
-                <!--            <Blocker active={disabled}/>-->
             </div>
             {#if label}
                 <div class="label">{label}</div>
@@ -40,8 +53,9 @@
         </div>
     </button>
 {/snippet}
+
 {#if tooltip}
-    {#if tooltip.children}
+    {#if typeof tooltip === 'object' && tooltip.children}
         <Paper hover mobile={false} {...tooltip} target={button}/>
     {:else}
         <Paper tl hover mobile={false} target={button} children={tooltip}/>
