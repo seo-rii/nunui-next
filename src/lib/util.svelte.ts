@@ -1,5 +1,8 @@
+import type { Snippet } from 'svelte';
 import { quadInOut } from 'svelte/easing';
 import { on } from 'svelte/events';
+
+export type Renderable = string | number | Snippet | boolean | number | undefined;
 
 export function tween(value: number, { duration = 500, easing = quadInOut } = {}) {
 	let current = $state(value);

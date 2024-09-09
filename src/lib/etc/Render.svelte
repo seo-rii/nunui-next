@@ -1,22 +1,19 @@
 <script lang="ts">
-	import type { Snippet } from "svelte";
+	import type { Renderable } from '$lib/util.svelte.js';
+	import type { Snippet } from 'svelte';
 
-    type Renderable = string | number | Snippet | boolean | number | undefined;
-    interface RenderType {
-        children?: Renderable;
-        it?: Renderable;
-    }
+	interface RenderType {
+		children?: Renderable;
+		it?: Renderable;
+	}
 
-    let {
-        children = null as any,
-        it = null as any,
-    }: RenderType = $props();
+	let { children = null as any, it = null as any }: RenderType = $props();
 
-    let target = $derived<Renderable>(children || it);
+	let target = $derived<Renderable>(children || it);
 </script>
 
-{#if typeof target === "string" || typeof target === "number"}
-    {target}
+{#if typeof target === 'string' || typeof target === 'number'}
+	{target}
 {:else if !(target === null || target === undefined || target === false)}
-    {@render (target as Snippet)?.()}
+	{@render (target as Snippet)?.()}
 {/if}

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import PaperDesktop from '$lib/paper/PaperDesktop.svelte';
-	import { getContext, type Snippet } from 'svelte';
-	import { delayedToggle, hovering } from '$lib/util.svelte.js';
+	import { getContext } from 'svelte';
+	import { delayedToggle, hovering, type Renderable } from '$lib/util.svelte.js';
 	import { Render } from '$lib/index.js';
 	import PaperMobile from '$lib/paper/PaperMobile.svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
@@ -10,7 +10,7 @@
 		children?: any;
 		hover?: boolean;
 		mobile?: boolean;
-		target?: Snippet;
+		target?: Renderable;
 		tl?: boolean;
 		tc?: boolean;
 		tr?: boolean;

@@ -12,6 +12,7 @@
         Expand, Select, Table
     } from "$lib/index.js";
     import {tween} from "$lib/util.svelte.js";
+	import List from "../lib/list/List.svelte";
 
     const val = tween(0.5);
 
@@ -93,6 +94,12 @@
     sdfsdfdssdfasfasdfasdfasfasddfasd<br>
     sdfsdfdssdfasfasdfasdfasfasddfasd<br>
     sdfsdfdssdfasfasdfasdfasfasddfasd<br>
+</Paper>
+<Paper mr inlineBlock dense>
+    {#snippet target()}
+        <Button icon="menu">List</Button>
+    {/snippet}
+    <List list={[{title: 'test', onclick: () => flag++}, {title: 'test2', icon: 'star', onclick: () => flag++}, {title: 'test3', onclick: () => flag++}]}/>
 </Paper>
 <br>
 <Radio label="test" value={0} name="test" bind:selected={flag}/>

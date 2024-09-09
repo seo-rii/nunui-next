@@ -19,6 +19,10 @@ import CircularProgress from '$lib/progress/CircularProgress.svelte';
 
 import Table from '$lib/table/Table.svelte';
 
+import List from '$lib/list/List.svelte';
+import OneLine from '$lib/list/OneLine.svelte';
+import TwoLine from '$lib/list/TwoLine.svelte';
+
 export {
 	ThemeProvider,
 	Button,
@@ -34,5 +38,8 @@ export {
 	Checkbox,
 	Select,
 	Expand,
-	Table
+	Table,
+	List,
+	OneLine,
+	TwoLine
 };
