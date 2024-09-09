@@ -5,6 +5,7 @@
 	let {
 		children,
 		show = $bindable(false),
+		remap,
 
 		tl,
 		tc,
@@ -17,6 +18,7 @@
 		...rest
 	} = $props();
 
+	let root = $state<HTMLDivElement | null>(null);
 	let target = $state<HTMLDivElement | null>(null);
 	let mh = $state('100vh'),
 		mw = $state('100vw');
@@ -24,61 +26,140 @@
 	let scrollX = $state(0),
 		scrollY = $state(0);
 
+	let left = $state('');
+	let top = $state('');
+	let right = $state('');
+	let bottom = $state('');
+
 	$effect(() => {
-		if (!target) return;
+		if (!target || !root) return;
+		if (remap) {
+			document.body.appendChild(target);
+		}
 		let [_, __] = [scrollX, scrollY];
-		const { top, left, bottom, right } = (
-			target?.parentElement as HTMLElement
-		).getBoundingClientRect();
+		const {
+			top: elTop,
+			left: elLeft,
+			bottom: elBottom,
+			right: elRight
+		} = (root?.parentElement as HTMLElement).getBoundingClientRect();
+		left = '';
+		top = '';
+		right = '';
+		bottom = '';
 
 		flushSync();
 		setTimeout(() => {
 			const { innerHeight, innerWidth } = window;
 			if (tl || tc || tr) {
-				mh = `${top - 12}px`;
+				mh = `${elTop - 12}px`;
 			} else if (bl || bc || br) {
-				mh = `${innerHeight - bottom - 12}px`;
+				mh = `${innerHeight - elBottom - 12}px`;
 			} else {
-				mh = `${Math.min(top, innerHeight - bottom) - 12}px`;
+				mh = `${Math.min(elTop, innerHeight - elBottom) - 12}px`;
 			}
 
 			if (tl || bl) {
-				mw = `${innerWidth - left - 12}px`;
+				mw = `${innerWidth - elLeft - 12}px`;
 			} else if (tr || br) {
-				mw = `${right - 12}px`;
+				mw = `${elRight - 12}px`;
 			} else if (ml) {
-				mw = `${left - 12}px`;
+				mw = `${elLeft - 12}px`;
 			} else if (mr) {
-				mw = `${innerWidth - right - 12}px`;
+				mw = `${innerWidth - elRight - 12}px`;
 			} else {
-				mw = `${Math.min(innerWidth - left, right) - 12}px`;
+				mw = `${Math.min(innerWidth - elLeft, elRight) - 12}px`;
+			}
+			if (remap) {
+				if (tl) {
+					left = elLeft + 'px';
+					bottom = innerHeight - elTop + 4 + 'px';
+				} else if (tc) {
+					left = (elLeft + elRight) / 2 + 'px';
+					bottom = innerHeight - elTop + 4 + 'px';
+				} else if (tr) {
+					right = innerWidth - elRight + 'px';
+					bottom = innerHeight - elTop + 4 + 'px';
+				} else if (ml) {
+					right = innerWidth - elLeft + 4 + 'px';
+					top = (elTop + elBottom) / 2 + 'px';
+				} else if (mr) {
+					left = elRight + 4 + 'px';
+					top = (elTop + elBottom) / 2 + 'px';
+				} else if (bl) {
+					left = elLeft + 'px';
+					top = elBottom + 4 + 'px';
+				} else if (bc) {
+					left = (elLeft + elRight) / 2 + 'px';
+					top = elBottom + 4 + 'px';
+				} else if (br) {
+					right = innerWidth - elRight + 'px';
+					top = elBottom + 4 + 'px';
+				}
+			} else {
+				if (tl) {
+					left = '0';
+					bottom = 'calc(100% + 4px)';
+				} else if (tc) {
+					left = '50%';
+					bottom = 'calc(100% + 4px)';
+				} else if (tr) {
+					right = '0';
+					bottom = 'calc(100% + 4px)';
+				} else if (ml) {
+					right = 'calc(100% + 4px)';
+					top = '50%';
+				} else if (mr) {
+					left = 'calc(100% + 4px)';
+					top = '50%';
+				} else if (bl) {
+					left = '0';
+					top = 'calc(100% + 4px)';
+				} else if (bc) {
+					left = '50%';
+					top = 'calc(100% + 4px)';
+				} else if (br) {
+					right = '0';
+					top = 'calc(100% + 4px)';
+				}
 			}
 			flushSync();
 			render = true;
 		}, 0);
+
+		return () => {
+			if (remap) (root as HTMLDivElement).appendChild(target as any);
+		};
 	});
 </script>
 
 <svelte:window bind:scrollX bind:scrollY />
-<main
-	class:exit={!show}
-	{...rest}
-	class:tl
-	class:tc
-	class:tr
-	class:ml
-	class:mr
-	class:bl
-	class:bc
-	class:br
-	style:max-height={mh}
-	style:max-width={mw}
-	bind:this={target}
->
-	{#if render}
-		<Render {children} />
-	{/if}
-</main>
+<div class="root" bind:this={root}>
+	<main
+		class:exit={!show}
+		{...rest}
+		class:tl
+		class:tc
+		class:tr
+		class:ml
+		class:mr
+		class:bl
+		class:bc
+		class:br
+		style:max-height={mh}
+		style:max-width={mw}
+		style:left
+		style:top
+		style:right
+		style:bottom
+		class:remap
+		bind:this={target}
+	>
+		{#if render}
+			<Render {children} />
+		{/if}
+	</main>
+</div>
 
 <style lang="scss">
 	main {
@@ -94,55 +175,46 @@
 		overflow: auto;
 		overscroll-behavior: contain;
 
+		&.remap {
+			position: fixed;
+			z-index: 999999999;
+		}
+
 		&.exit {
 			animation: hide 0.2s cubic-bezier(1, 0, 0.67, 1) forwards;
 		}
 
 		&.tl {
-			bottom: calc(100% + 4px);
-			left: 0;
 			transform-origin: bottom left;
 		}
 
 		&.tc {
-			bottom: calc(100% + 4px);
-			left: 50%;
 			--transform: translateX(-50%);
 			transform: translateX(-50%);
 			transform-origin: bottom center;
 		}
 
 		&.tr {
-			bottom: calc(100% + 4px);
-			right: 0;
 			transform-origin: bottom right;
 		}
 
 		&.ml {
-			bottom: 50%;
-			right: calc(100% + 4px);
-			--transform: translateY(50%);
-			transform: translateY(50%);
+			--transform: translateY(-50%);
+			transform: translateY(-50%);
 			transform-origin: center right;
 		}
 
 		&.mr {
-			bottom: 50%;
-			left: calc(100% + 4px);
-			--transform: translateY(50%);
-			transform: translateY(50%);
+			--transform: translateY(-50%);
+			transform: translateY(-50%);
 			transform-origin: center left;
 		}
 
 		&.bl {
-			top: calc(100% + 4px);
-			left: 0;
 			transform-origin: top left;
 		}
 
 		&.bc {
-			top: calc(100% + 4px);
-			left: 50%;
 			--transform: translateX(-50%);
 			transform: translateX(-50%);
 			transform-origin: top center;

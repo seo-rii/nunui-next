@@ -33,6 +33,7 @@
 		dense?: boolean;
 
 		by?: 'hover' | 'click';
+		remap?: boolean;
 	}
 
 	const mobile = getContext<{ v: boolean }>('mobile');
@@ -55,7 +56,9 @@
 		dense = false,
 
 		hover: _hover = false,
-		by = _hover ? 'hover' : 'click'
+		by = _hover ? 'hover' : 'click',
+
+		remap = false
 	}: PaperProps = $props();
 
 	let useMobile = $derived(_mobile === undefined ? mobile.v : _mobile);
@@ -65,7 +68,7 @@
 		ig = false;
 
 	$effect(() => {
-		if (by === 'hover') _show = hover.v;
+		if (by === 'hover' && !useMobile) _show = hover.v;
 	});
 
 	$effect(() => {
@@ -101,13 +104,14 @@
 	<Render it={target} />
 	{#if show}
 		{#if useMobile}
-			<PaperMobile bind:show={_show} onclick={() => (ig = true)}>
+			<PaperMobile bind:show={_show} onclick={() => (ig = true)} {remap}>
 				<div class="mobile" class:dense>
 					<Render {children} />
 				</div>
 			</PaperMobile>
 		{:else}
 			<PaperDesktop
+				{remap}
 				bind:show={_show}
 				onclick={() => (ig = true)}
 				{tl}

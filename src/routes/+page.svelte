@@ -34,7 +34,7 @@
         </tr>
     {/snippet}
     <tbody>
-    {#each {length: 100} as _}
+    {#each {length: 0} as _}
         <tr>
             {#each {length: 4} as _}
                 <td>123</td>
@@ -66,7 +66,7 @@
         sdfsdfdssdfasfasdfasdfasfasddfasd<br>
     {/each}
 </Paper>
-<Paper bl inlineBlock>
+<Paper bl inlineBlock remap>
     {#snippet target()}
         <Button icon="login">Join</Button>
     {/snippet}
