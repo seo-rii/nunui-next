@@ -1,4 +1,15 @@
-<script>
+<script lang="ts">
+    import type { HTMLAttributes } from 'svelte/elements';
+
+    interface CircularProgressProps extends HTMLAttributes<SVGElement> {
+        progress?: number;
+        indeterminate?: boolean;
+        secondary?: boolean;
+        primary?: boolean;
+        color?: string;
+        size?: string | number;
+    }
+
     let {
         progress: _progress = 0,
         indeterminate: _indeterminate = false,
@@ -7,11 +18,12 @@
         color = '',
         size = '1em',
         ...rest
-    } = $props()
+    }: CircularProgressProps = $props();
 
-    let start = $state(false), stop = $state(false)
-    let indeterminate = $derived(_progress < 0 || _indeterminate)
-    let lastIndeterminate = $state(indeterminate)
+    let start = $state(false);
+    let stop = $state(false);
+    let indeterminate = $derived(_progress < 0 || _indeterminate);
+    let lastIndeterminate = $state(_progress < 0 || _indeterminate);
 
     $effect(() => {
         if (indeterminate !== lastIndeterminate) {
@@ -31,10 +43,10 @@
         }
     });
 
-    let progress = $derived(stop ? 1 : (start ? 0 : _progress))
+    let progress = $derived(stop ? 1 : (start ? 0 : _progress));
 </script>
 
-<svg style:--size="{+size ? `${size}px` : size}" width="35px" height="35px" viewBox="0 0 70 70"
+<svg style:--size="{typeof size === 'number' ? `${size}px` : size}" width="35px" height="35px" viewBox="0 0 70 70"
      xmlns="http://www.w3.org/2000/svg" class:primary class:secondary {...rest}>
     <circle class="rail" fill="none" stroke-width="4" stroke-linecap="round" cx="35" cy="35" r="30"
             style:stroke={color}></circle>

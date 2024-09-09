@@ -1,6 +1,6 @@
 <script lang="ts">
     import type {HTMLAttributes} from 'svelte/elements';
-    import {Ripple} from "$lib";
+    import {Ripple} from "$lib/index.js";
     import Icon from "$lib/etc/Icon.svelte";
     import Render from "$lib/etc/Render.svelte";
     import Paper from "$lib/paper/Paper.svelte";
@@ -21,6 +21,8 @@
         active?: boolean;
         full?: boolean;
         children?: any;
+
+        [k: `light-${number}` | `dark-${number}`]: boolean
     }
 
     let {
@@ -52,7 +54,7 @@
 </script>
 
 {#snippet button()}
-    <button {...rest} class={buttonClass} aria-label={tooltip}>
+    <button {...rest} class={buttonClass} aria-label={tooltip as string}>
         {#if icon}
             <Icon {icon} style={children ? "margin-right: 4px" : ''}/>
         {/if}
@@ -76,6 +78,7 @@
 <style lang="scss">
   button {
     -webkit-appearance: none;
+    appearance: none;
     background: var(--theme);
     color: var(--on-theme);
     border: none;

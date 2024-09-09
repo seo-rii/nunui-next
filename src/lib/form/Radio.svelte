@@ -1,13 +1,24 @@
-<script context="module">
-    let counter = 0
+<script lang="ts" context="module">
+    let counter = 0;
 
     function getCounter() {
-        return `nunui-radio-${counter++}`
+        return `nunui-radio-${counter++}`;
     }
 </script>
 
 <script lang="ts">
-    import {Render, Ripple} from "$lib";
+    import type { HTMLInputAttributes } from 'svelte/elements';
+    import { Render, Ripple } from "$lib/index.js";
+
+    interface RadioProps extends Omit<HTMLInputAttributes, 'value'> {
+        name?: string;
+        secondary?: boolean;
+        primary?: boolean;
+        label?: string | any;
+        id?: string;
+        value?: any;
+        selected?: any;
+    }
 
     let {
         name,
@@ -15,20 +26,20 @@
         primary = !secondary,
         label,
         id: _id,
-
         value,
         selected = $bindable(null),
-    } = $props()
+        ...rest
+    }: RadioProps = $props();
 
-    let id = $derived(_id || getCounter())
-    let target = $state(null)
-    let container = $state(null)
+    let id = $derived(_id || getCounter());
+    let target = $state<HTMLInputElement | null>(null);
+    let container = $state<HTMLElement | null>(null);
 </script>
 
 <main bind:this={container} class:primary class:secondary>
     <div>
         <Ripple extra={container} center/>
-        <input {id} type="radio" {name} {value} bind:this={target} bind:group={selected}/>
+        <input {id} type="radio" {name} {value} bind:this={target} bind:group={selected} {...rest}/>
     </div>
     {#if label}
         <label for={id}>
@@ -62,6 +73,7 @@
 
   input {
     -webkit-appearance: none;
+    appearance: none;
     margin: 6px;
     padding: 0;
     width: calc(100% - 12px);

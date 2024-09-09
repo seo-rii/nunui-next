@@ -7,7 +7,18 @@
 </script>
 
 <script lang="ts">
-    import {Render, Ripple} from "$lib";
+    import type { HTMLInputAttributes } from 'svelte/elements';
+    import {Render, Ripple} from "$lib/index.js";
+
+    interface CheckboxProps extends Omit<HTMLInputAttributes, 'checked'> {
+        name?: string;
+        secondary?: boolean;
+        primary?: boolean;
+        label?: string | any;
+        id?: string;
+        value?: any;
+        checked?: boolean;
+    }
 
     let {
         name,
@@ -17,17 +28,18 @@
         id: _id,
         value,
         checked = $bindable(false),
-    } = $props()
+        ...rest
+    }: CheckboxProps = $props();
 
     let id = $derived(_id || getCounter())
-    let target = $state(null)
-    let container = $state(null)
+    let target = $state<HTMLInputElement | null>(null)
+    let container = $state<HTMLElement | null>(null)
 </script>
 
 <main bind:this={container} class:primary class:secondary>
     <div>
         <Ripple extra={container} center/>
-        <input {id} type="checkbox" {name} {value} bind:this={target} bind:checked/>
+        <input {id} type="checkbox" {name} {value} bind:this={target} bind:checked {...rest}/>
         <svg class="icon" viewBox="0 0 18 18" aria-hidden="true">
             <rect class="short" height="5.6px" width="2px"></rect>
             <rect class="long" width="10.6px" height="2px"></rect>
@@ -116,6 +128,7 @@
 
   input {
     -webkit-appearance: none;
+    appearance: none;
     padding: 0;
     margin: 6px;
     width: calc(100% - 12px);

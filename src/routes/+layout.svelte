@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {Button, ThemeProvider} from "$lib";
+    import {Button, ThemeProvider} from "$lib/index.js";
 
     const defaultLight = {
         primary: '#6200EE',

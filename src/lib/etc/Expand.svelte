@@ -1,6 +1,6 @@
 <script lang="ts">
     import {delayedToggle} from "$lib/util.svelte.js";
-    import {Render} from "$lib";
+    import {Render} from "$lib/index.js";
     import {flushSync} from "svelte";
 
     let {

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {Render} from "$lib";
+    import {Render} from "$lib/index.js";
     import type { HTMLAttributes } from 'svelte/elements';
 
     interface TableProps extends HTMLAttributes<HTMLTableElement> {

@@ -1,4 +1,15 @@
 <script lang="ts">
+    import type { HTMLAttributes } from 'svelte/elements';
+
+    interface IconProps extends HTMLAttributes<HTMLSpanElement> {
+        icon?: string;
+        color?: string;
+        outlined?: boolean;
+        size?: number;
+        style?: string;
+        weight?: number;
+    }
+
     let {
         icon: _icon,
         color,
@@ -7,7 +18,7 @@
         style: _style = '',
         weight,
         ...rest
-    } = $props()
+    }: IconProps = $props();
 
     let _weight = $derived(weight ? `--weight:${weight};` : '');
     let _fill = $derived(outlined ? '--fill:0;' : ``);
@@ -18,7 +29,7 @@
     let icon = $derived(_icon || Object.keys(rest)[0]);
 </script>
 
-<span class="notranslate" {style} aria-hidden="true" data-nosnippet>{icon}</span>
+<span class="notranslate" {style} aria-hidden="true" data-nosnippet {...rest}>{icon}</span>
 
 <style lang="scss">
   @font-face {
@@ -41,6 +52,7 @@
     word-wrap: normal;
     direction: ltr;
     -webkit-font-feature-settings: 'liga';
+    font-feature-settings: 'liga';
     -webkit-font-smoothing: antialiased;
     user-select: none;
     transition: all 0.2s;

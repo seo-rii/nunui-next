@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { HTMLAttributes } from 'svelte/elements';
-    import { Ripple, Icon, Paper } from "$lib";
+    import { Ripple, Icon, Paper } from "$lib/index.js";
 
     interface IconButtonProps extends HTMLAttributes<HTMLButtonElement> {
         flat?: boolean;
@@ -37,7 +37,7 @@
 
 {#snippet button()}
     <button {...rest} bind:this={container}>
-        <div class="container" style:--size={+size ? size + 'px' : size || '1.8em'}>
+        <div class="container" style:--size={+(size as number) ? size + 'px' : size || '1.8em'}>
             <div class="wrapper" class:flat>
                 <div class="button" class:flat>
                     <Icon {icon} weight={disabled ? 300 : (clicked ? 200 : (hover ? 500 : 300))}
@@ -67,6 +67,7 @@
 <style lang="scss">
   button {
     -webkit-appearance: none;
+    appearance: none;
     display: inline-block;
     border: none;
     background: transparent;

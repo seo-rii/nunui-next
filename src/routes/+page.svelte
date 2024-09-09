@@ -10,7 +10,7 @@
         Paper,
         IconButton,
         Expand, Select, Table
-    } from "$lib";
+    } from "$lib/index.js";
     import {tween} from "$lib/util.svelte.js";
 
     const val = tween(0.5);
@@ -65,7 +65,7 @@
         sdfsdfdssdfasfasdfasdfasfasddfasd<br>
     {/each}
 </Paper>
-<Paper bl inline-block>
+<Paper bl inlineBlock>
     {#snippet target()}
         <Button icon="login">Join</Button>
     {/snippet}
@@ -86,7 +86,7 @@
         <Button icon="login" full>Join</Button>
     </main>
 </Paper>
-<Paper mr inline-block hover>
+<Paper mr inlineBlock hover>
     {#snippet target()}
         <Button icon="favorite">sdfsdfsdf</Button>
     {/snippet}

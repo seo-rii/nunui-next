@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {Render} from "$lib";
+    import {Render} from "$lib/index.js";
     import {on} from "svelte/events";
 
     let {

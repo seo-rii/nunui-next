@@ -1,4 +1,15 @@
 <script lang="ts">
+    import type { HTMLAttributes } from 'svelte/elements';
+
+    interface LinearProgressProps extends HTMLAttributes<HTMLDivElement> {
+        progress?: number;
+        indeterminate?: boolean;
+        secondary?: boolean;
+        primary?: boolean;
+        color?: string;
+        width?: string | number;
+    }
+
     let {
         progress: _progress = 0,
         width = "100%",
@@ -7,11 +18,11 @@
         secondary = false,
         primary = !secondary,
         color: background = '',
-    } = $props()
+    }: LinearProgressProps = $props()
 
     let start = $state(false), stop = $state(false)
     let indeterminate = $derived(_progress < 0 || _indeterminate)
-    let lastIndeterminate = $state(indeterminate)
+    let lastIndeterminate = $state(_progress < 0 || _indeterminate)
 
     let style = $derived(`width: ${width}; ${_style}`);
 

@@ -41,7 +41,7 @@ export function tween(value: number, { duration = 500, easing = quadInOut } = {}
 	};
 }
 
-export function hovering(node: HTMLElement, hover: { v: boolean }) {
+export function hovering(node: HTMLElement, hover: { v: boolean; r?: boolean }) {
 	hover.v = false;
 	const handlers = [
 		on(node, 'mouseenter', () => {
@@ -85,7 +85,15 @@ export function delayedToggle(iv = false, setDelay = 200, clearDelay = 200) {
 	};
 }
 
-export function classes(...args: (undefined | null | string | string[] | Record<string, any>)[]) {
+export function classes(
+	...args: (
+		| undefined
+		| null
+		| string
+		| string[]
+		| Record<string, string | boolean | null | undefined>
+	)[]
+) {
 	return args
 		.map((x) => {
 			if (typeof x === 'string') return x.split(' ');
