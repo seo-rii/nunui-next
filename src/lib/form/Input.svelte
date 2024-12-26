@@ -23,6 +23,8 @@
 		trailing?: string | { icon: string } | any;
 		onkeyup?: (e: KeyboardEvent) => void;
 		onsubmit?: (e: Event) => void;
+		input?: HTMLInputElement | HTMLTextAreaElement;
+		block?: boolean;
 	}
 
 	let {
@@ -39,6 +41,9 @@
 
 		onkeyup: _onkeyup,
 		onsubmit,
+
+		input = $bindable<HTMLInputElement | HTMLTextAreaElement>(),
+		block,
 
 		...rest
 	}: InputProps = $props();
@@ -58,25 +63,27 @@
 </script>
 
 {#snippet additional(target: any, trailing = false)}
-	<span class:trailing>
-		{#if typeof target === 'string'}
-			<Icon icon={target} class="leading" />
-		{:else if target?.icon}
-			<IconButton {...target} />
-		{:else}
-			<Render it={target} />
-		{/if}
-	</span>
+	{#if target}
+		<span class:trailing>
+			{#if typeof target === 'string'}
+				<Icon icon={target} class="leading" />
+			{:else if target?.icon}
+				<IconButton {...target} />
+			{:else}
+				<Render it={target} />
+			{/if}
+		</span>
+	{/if}
 {/snippet}
 
-<main class:primary class:secondary>
+<main class:primary class:secondary class:block>
 	{@render additional(leading)}
 	<div class="background"></div>
 	<div>
 		{#if multiline}
-			<textarea {id} bind:value placeholder="&nbsp;" {...rest} {onkeyup}></textarea>
+			<textarea {id} bind:value placeholder="&nbsp;" {...rest} {onkeyup} bind:this={input}></textarea>
 		{:else}
-			<input {id} {type} bind:value placeholder="&nbsp;" {...rest} {onkeyup} />
+			<input {id} {type} bind:value placeholder="&nbsp;" {...rest} {onkeyup} bind:this={input} />
 		{/if}
 		{#if placeholder}
 			<label for={id}>{placeholder}</label>
@@ -87,10 +94,10 @@
 
 <style lang="scss">
 	span {
-		vertical-align: 10%;
 		position: relative;
 		z-index: 1;
 		margin: 0 -0.4em 0 0.6em;
+		transform: translateY(10%);
 
 		--on-theme: var(--theme);
 
@@ -105,10 +112,15 @@
 
 	main {
 		position: relative;
-		display: inline-block;
+		display: inline-flex;
 		background: var(--theme-light1);
 		border-bottom: 1px solid var(--theme-light4);
 		border-radius: 4px 4px 0 0;
+		align-items: center;
+
+		&.block {
+			display: flex;
+		}
 	}
 
 	input,
@@ -123,6 +135,7 @@
 		border-radius: 4px 4px 0 0;
 		position: relative;
 		z-index: 1;
+		width: calc(100% - 2em);
 	}
 
 	.background {
@@ -151,6 +164,7 @@
 	div {
 		position: relative;
 		display: inline-block;
+		flex: 1;
 	}
 
 	label {

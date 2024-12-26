@@ -34,6 +34,8 @@
 
 		by?: 'hover' | 'click';
 		remap?: boolean;
+
+		onclick?: () => void;
 	}
 
 	const mobile = getContext<{ v: boolean }>('mobile');
@@ -58,7 +60,9 @@
 		hover: _hover = false,
 		by = _hover ? 'hover' : 'click',
 
-		remap = false
+		remap = false,
+		onclick,
+		...rest
 	}: PaperProps = $props();
 
 	let useMobile = $derived(_mobile === undefined ? mobile.v : _mobile);
@@ -94,7 +98,8 @@
 <main
 	class:inlineBlock
 	class:block
-	onclick={() => {
+	onclick={(e) => {
+		onclick?.(e);
 		if (ig) return;
 		ig = true;
 		_show = !_show;
@@ -104,7 +109,7 @@
 	<Render it={target} />
 	{#if show}
 		{#if useMobile}
-			<PaperMobile bind:show={_show} onclick={() => (ig = true)} {remap}>
+			<PaperMobile bind:show={_show} onclick={() => (ig = true)} {remap} {...rest}>
 				<div class="mobile" class:dense>
 					<Render {children} />
 				</div>
@@ -122,6 +127,7 @@
 				{bl}
 				{bc}
 				{br}
+				{...rest}
 			>
 				<div class="desktop" class:dense>
 					<Render {children} />

@@ -156,4 +156,9 @@
       transform: rotate(450deg);
     }
   }
+
+  svg {
+    width: var(--size);
+    height: var(--size);
+  }
 </style>

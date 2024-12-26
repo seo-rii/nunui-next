@@ -47,17 +47,17 @@
     <Ripple active/>
 </div>
 <Button icon="favorite" {outlined} onclick={() => flag++}>sdfsdfsdf</Button>
-<Button icon="star" secondary {transparent} onclick={() => flag++} tooltip={{tr: true, children: 'test'}}>sdfsdfsdf
+<Button icon="star" secondary {transparent} onclick={() => flag++} tooltip={{tr: true, children: 'test'}} loading={flag % 2 === 1}>sdfsdfsdf
 </Button>
-<Button icon="star" secondary small outlined active={flag % 2} onclick={() => flag++}>sdfsdfsdf</Button>
-<Button icon="star" secondary raised={flag % 2} onclick={() => flag++}>sdfsdfsdf</Button>
+<Button icon="star" secondary small outlined active={flag % 2 === 1} onclick={() => flag++} loading>sdfsdfsdf</Button>
+<Button icon="star" secondary raised={flag % 2 === 1} onclick={() => flag++}>sdfsdfsdf</Button>
 <Button light-5 icon="star" secondary large onclick={() => flag++}>sdfsdfsdf</Button>
 <Button icon="star" secondary round onclick={() => flag++}>sdfsdfsdf</Button>
 <Button icon="star" secondary round onclick={() => flag++}/>
-<LinearProgress progress={val.value} indeterminate={flag % 2}/>
+<LinearProgress progress={val.value} indeterminate={flag % 2 === 1}/>
 <LinearProgress progress={val.value} indeterminate={flag % 2 === 0} secondary/>
-<IconButton icon="favorite" label="즐겨찾기" flat size="30" onclick={() => flag++} active={flag % 2}/>
-<IconButton icon="favorite" tooltip="테스트" onclick={() => flag++} active={flag % 2}/>
+<IconButton icon="favorite" label="즐겨찾기" flat size="30" onclick={() => flag++} active={flag % 2 === 1}/>
+<IconButton icon="favorite" tooltip="테스트" onclick={() => flag++} active={flag % 2 === 1}/>
 <Paper tl>
     {#snippet target()}
         <Button icon="favorite" tooltip="안녕">sdfsdfsdf</Button>
@@ -108,13 +108,15 @@
 <Checkbox secondary label="test2" bind:checked={flag}/>
 <br>
 
-<CircularProgress progress={0.7} indeterminate={flag % 2}/>
-<CircularProgress secondary progress={0.7} indeterminate={flag % 2}/>
+<CircularProgress progress={0.7} indeterminate={flag % 2 === 1}/>
+<CircularProgress secondary progress={0.7} indeterminate={flag % 2 === 1}/>
 
 <Input bind:value={flag} placeholder="test" leading="search"
        trailing={{icon: 'close', onclick: () => flag = 0, tooltip: '초기화'}}/>
-<Input bind:value={flag} placeholder="value" type="number"
-       trailing="restart_alt"/>
+<div style="width: 500px">
+    <Input bind:value={flag} placeholder="value" type="number" block
+        trailing="restart_alt"/>
+</div>
 <br>
 <Input multiline bind:value={flag} placeholder="test"/>
 <Select placeholder="테스트"></Select>

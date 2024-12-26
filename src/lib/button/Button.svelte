@@ -4,7 +4,9 @@
 	import Icon from '$lib/etc/Icon.svelte';
 	import Render from '$lib/etc/Render.svelte';
 	import Paper from '$lib/paper/Paper.svelte';
+	import CircularProgress from '$lib/progress/CircularProgress.svelte';
 	import { classes } from '$lib/util.svelte.js';
+	import {fade} from 'svelte/transition';
 
 	interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
 		primary?: boolean;
@@ -21,6 +23,7 @@
 		active?: boolean;
 		full?: boolean;
 		children?: any;
+		loading?: boolean;
 
 		[k: `light-${number}` | `dark-${number}`]: boolean;
 	}
@@ -41,6 +44,7 @@
 		active,
 		class: className,
 		full = false,
+		loading = false,
 		...rest
 	}: ButtonProps = $props();
 
@@ -64,13 +68,18 @@
 </script>
 
 {#snippet button()}
-	<button {...rest} class={buttonClass} aria-label={tooltip as string}>
+	<button {...rest} disabled={disabled || loading} class={buttonClass} aria-label={tooltip as string}>
 		{#if icon}
 			<Icon {icon} style={children ? 'margin-right: 4px' : ''} />
 		{/if}
 		<Render {children} />
 		{#if !disabled}
 			<Ripple {active} />
+		{/if}
+		{#if loading}
+			<div class="loading" transition:fade={{duration: 200}}>
+				<CircularProgress indeterminate {primary} {secondary} />
+			</div>
 		{/if}
 	</button>
 {/snippet}
@@ -99,6 +108,7 @@
 			background 0.3s,
 			box-shadow 0.3s,
 			color 0.3s;
+		line-height: 1em;
 
 		&.small {
 			padding: calc(5px - var(--border, 0px)) calc(10px - var(--border, 0px));
@@ -118,7 +128,7 @@
 			box-shadow: color-mix(in srgb, var(--on-surface), transparent 80%) 0 2px 5px 0;
 		}
 
-		&:not(.transparent):not(.outlined):hover:not(:active) {
+		&:not(.transparent):not(.outlined):hover:not(:active), &:not(.transparent):not(.outlined):active:not(:active) {
 			box-shadow: color-mix(in srgb, var(--on-surface), transparent 70%) 0 4px 8px 0;
 		}
 
@@ -143,6 +153,18 @@
 			--on-theme: var(--theme);
 			background: transparent;
 			color: var(--theme);
+		}
+
+		.loading {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background: var(--theme);
 		}
 	}
 </style>

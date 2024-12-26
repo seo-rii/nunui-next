@@ -7,9 +7,10 @@
         children,
         hide = false,
         initial = false,
+        bindWidth = false
     } = $props();
 
-    let clientHeight = $state(0), height = $state(0);
+    let clientHeight = $state(0), clientWidth = $state(0), height = $state(0);
     let active = $state(initial);
     let render = delayedToggle(!hide, 0);
 
@@ -22,9 +23,9 @@
     })
 </script>
 
-<main style:--height="{height}px" class:active>
+<main style:--height="{height}px" class:active bind:clientWidth>
     {#if render.v}
-        <div bind:clientHeight>
+        <div bind:clientHeight style:--width="{clientWidth}px" class:bindWidth>
             <Render {children}/>
         </div>
     {/if}
@@ -41,6 +42,10 @@
 
       div {
         position: absolute;
+
+        &.bindWidth {
+          width: var(--width);
+        }
       }
     }
   }
