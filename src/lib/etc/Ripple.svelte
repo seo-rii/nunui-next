@@ -126,7 +126,7 @@
 		pointer-events: none;
 	}
 
-	:global(*):has(> .__rp) {
+	:global(*:has(> .__rp)) {
 		position: relative;
 		overflow: hidden;
 	}

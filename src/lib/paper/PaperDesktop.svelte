@@ -19,7 +19,7 @@
 	} = $props();
 
 	let root = $state<HTMLDivElement | null>(null);
-	let target = $state<HTMLDivElement | null>(null);
+	let target = $state<HTMLElement | null>(null);
 	let mh = $state('100vh'),
 		mw = $state('100vw');
 	let render = $state(false);

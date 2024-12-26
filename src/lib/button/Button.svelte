@@ -50,7 +50,7 @@
 
 	const buttonClass = $derived(
 		classes(
-			className,
+			className as any,
 			{
 				primary,
 				secondary,

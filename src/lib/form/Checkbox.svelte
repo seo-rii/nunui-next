@@ -1,4 +1,4 @@
-<script context="module">
+<script module>
     let counter = 0
 
     function getCounter() {

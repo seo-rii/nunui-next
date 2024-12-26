@@ -9,14 +9,16 @@
         ...rest
     } = $props();
 
-    let container = $state(null);
+    let container = $state<HTMLElement | null>(null);
     let delta = $state(0), dx = $state(0);
     let tr = $derived(delta || dx);
 
     $effect(() => {
+        if(!container) return;
         let from = 0, fx = 0, run = false;
         const handlers = [
             on(container, "touchstart", (e) => {
+                if(!container) return;
                 e.stopPropagation();
                 const {clientY, clientX} = e.touches[0];
                 const {top, left} = container.getBoundingClientRect();
@@ -25,6 +27,7 @@
                 run = true;
             }),
             on(container, "touchmove", (e) => {
+                if(!container) return;
                 e.stopPropagation();
                 if (!run) return;
                 if (container.scrollTop > 0) {

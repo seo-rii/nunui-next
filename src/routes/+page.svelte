@@ -104,8 +104,8 @@
 <br>
 <Radio label="test" value={0} name="test" bind:selected={flag}/>
 <Radio secondary label="test2" value={1} name="test" bind:selected={flag}/>
-<Checkbox label="test" bind:checked={flag}/>
-<Checkbox secondary label="test2" bind:checked={flag}/>
+<Checkbox label="test" bind:checked={flag as any}/>
+<Checkbox secondary label="test2" bind:checked={flag as any}/>
 <br>
 
 <CircularProgress progress={0.7} indeterminate={flag % 2 === 1}/>

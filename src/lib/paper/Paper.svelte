@@ -35,7 +35,7 @@
 		by?: 'hover' | 'click';
 		remap?: boolean;
 
-		onclick?: () => void;
+		onclick?: (e?: any) => void;
 	}
 
 	const mobile = getContext<{ v: boolean }>('mobile');

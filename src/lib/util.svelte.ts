@@ -1,4 +1,5 @@
 import type { Snippet } from 'svelte';
+import type { ActionReturn } from 'svelte/action';
 import { quadInOut } from 'svelte/easing';
 import { on } from 'svelte/events';
 
@@ -54,7 +55,7 @@ export function hovering(node: HTMLElement, hover: { v: boolean; r?: boolean }) 
 			hover.v = false;
 		})
 	];
-	return () => handlers.forEach((off) => off());
+	return (() => handlers.forEach((off) => off())) as ActionReturn;
 }
 
 export function delayedToggle(iv = false, setDelay = 200, clearDelay = 200) {
@@ -93,7 +94,10 @@ export function classes(
 		| undefined
 		| null
 		| string
-		| string[]
+		| number
+		| bigint
+		| boolean
+		| (string | undefined | null | number | bigint | boolean)[]
 		| Record<string, string | boolean | null | undefined>
 	)[]
 ) {
@@ -102,7 +106,7 @@ export function classes(
 			if (typeof x === 'string') return x.split(' ');
 			if (Array.isArray(x)) return x;
 			if (!x) return [];
-			return Object.keys(x).filter((k) => x[k]);
+			return Object.keys(x).filter((k) => x[k as unknown as keyof typeof x]);
 		})
 		.flat()
 		.join(' ');
