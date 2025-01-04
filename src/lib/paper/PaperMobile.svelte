@@ -5,6 +5,7 @@
     let {
         children,
         show = $bindable(false),
+        remap,
 
         ...rest
     } = $props();
@@ -60,15 +61,37 @@
     })
 
     const vx = $derived(dx > 0 ? Math.pow(dx, 0.3) : -Math.pow(-dx, 0.3));
+
+
+	let root = $state<HTMLDivElement | null>(null);
+  let scrim = $state<HTMLDivElement | null>(null);
+	let target = $state<HTMLElement | null>(null);
+
+	$effect(() => {
+		if (!target || !scrim || !root) return;
+		if (remap) {
+      document.body.appendChild(scrim);
+			document.body.appendChild(target);
+		}
+
+    return () => {
+      if (remap) {
+        (root as HTMLDivElement).appendChild(scrim as any);
+        (root as HTMLDivElement).appendChild(target as any);
+      }
+    };
+  })
 </script>
 
-<div class="scrim" class:show></div>
-<main {...rest} class:hide={!show} bind:this={container} style:--delta="{delta}px" style:--dx="{vx}px" class:tr>
-    <div class="line">
-        <div class="handle"></div>
-    </div>
-    <Render {children}/>
-</main>
+<div class="root" bind:this={root}>
+  <div class="scrim" class:remap bind:this={scrim} class:show></div>
+  <main {...rest} class:remap class:hide={!show} bind:this={container} style:--delta="{delta}px" style:--dx="{vx}px" class:tr bind:this={target}>
+      <div class="line">
+          <div class="handle"></div>
+      </div>
+      <Render {children}/>
+  </main>
+</div>
 
 <style lang="scss">
   .scrim {
@@ -129,6 +152,11 @@
       animation: hide 0.2s cubic-bezier(1, 0, .67, 1) forwards;
     }
   }
+
+
+  .remap {
+		z-index: 999999999;
+	}
 
   @keyframes fade {
     from {

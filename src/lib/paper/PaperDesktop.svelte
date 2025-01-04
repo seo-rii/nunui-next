@@ -17,9 +17,6 @@
 		br,
 		...rest
 	} = $props();
-
-	let root = $state<HTMLDivElement | null>(null);
-	let target = $state<HTMLElement | null>(null);
 	let mh = $state('100vh'),
 		mw = $state('100vw');
 	let render = $state(false);
@@ -31,6 +28,8 @@
 	let right = $state('');
 	let bottom = $state('');
 
+	let root = $state<HTMLDivElement | null>(null);
+	let target = $state<HTMLElement | null>(null);
 	$effect(() => {
 		if (!target || !root) return;
 		if (remap) {

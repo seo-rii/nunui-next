@@ -67,16 +67,20 @@
 
 	let useMobile = $derived(_mobile === undefined ? mobile.v : _mobile);
 	let hover = delayedToggle(false);
+	let hoverTarget = delayedToggle(false);
 	let show = $state(_show);
 	let iv = 0,
 		ig = false;
 
 	$effect(() => {
-		if (by === 'hover' && !useMobile) _show = hover.v;
+		if (by === 'hover' && !useMobile) _show = hover.v || hoverTarget.v;
 	});
 
 	$effect(() => {
-		if (_show) show = true;
+		if (_show) {
+			show = true;
+			if (iv) clearTimeout(iv);
+		}
 		else {
 			if (iv) clearTimeout(iv);
 			iv = setTimeout(() => (show = false), 200);
@@ -110,7 +114,7 @@
 	{#if show}
 		{#if useMobile}
 			<PaperMobile bind:show={_show} onclick={() => (ig = true)} {remap} {...rest}>
-				<div class="mobile" class:dense>
+				<div class="mobile" class:dense use:hovering={hoverTarget}>
 					<Render {children} />
 				</div>
 			</PaperMobile>
@@ -129,7 +133,7 @@
 				{br}
 				{...rest}
 			>
-				<div class="desktop" class:dense>
+				<div class="desktop" class:dense use:hovering={hoverTarget}>
 					<Render {children} />
 				</div>
 			</PaperDesktop>

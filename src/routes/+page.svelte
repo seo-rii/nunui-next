@@ -74,7 +74,7 @@
         <h2>Welcome!</h2>
         <p>
             To continue, you should agree to our
-            <Paper br mobile>
+            <Paper br mobile remap>
                 {#snippet target()}
                     <span style="text-decoration: underline">Term of service.</span>
                 {/snippet}
@@ -87,7 +87,7 @@
         <Button icon="login" full>Join</Button>
     </main>
 </Paper>
-<Paper mr inlineBlock hover>
+<Paper mr inlineBlock hover remap>
     {#snippet target()}
         <Button icon="favorite">sdfsdfsdf</Button>
     {/snippet}
