@@ -7,9 +7,10 @@
 	interface OneLineProps extends Omit<HTMLAttributes<HTMLElement>, 'title'> {
 		title?: Renderable;
 		icon?: string;
+		active?: boolean;
 	}
 
-	let { title, icon, ...rest }: OneLineProps = $props();
+	let { title, icon, active, ...rest }: OneLineProps = $props();
 </script>
 
 <main {...rest}>
@@ -17,7 +18,7 @@
 		<Icon {icon} />
 	{/if}
 	<Render it={title} />
-	<Ripple />
+	<Ripple {active} />
 </main>
 
 <style lang="scss">

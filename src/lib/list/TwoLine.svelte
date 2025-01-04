@@ -8,9 +8,10 @@
 		title?: Renderable;
 		subtitle?: Renderable;
 		icon?: string;
+		active?: boolean;
 	}
 
-	let { title, subtitle, icon, ...rest }: OneLineProps = $props();
+	let { title, subtitle, icon, active, ...rest }: OneLineProps = $props();
 </script>
 
 <main {...rest}>
@@ -21,7 +22,7 @@
 		<div class="title"><Render it={title} /></div>
 		<div class="subtitle"><Render it={subtitle} /></div>
 	</div>
-	<Ripple />
+	<Ripple {active} />
 </main>
 
 <style lang="scss">
