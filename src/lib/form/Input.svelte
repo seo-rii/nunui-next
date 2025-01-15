@@ -58,7 +58,8 @@
 					}
 					if (_onkeyup) _onkeyup(e);
 					if (type === 'number') {
-						if (!isNaN(+value)) value = +value;
+						console.log(value);
+						if (typeof value === 'string' && value !== '' && !isNaN(+value)) value = +value;
 					}
 				}
 			: null
