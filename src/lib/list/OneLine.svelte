@@ -27,6 +27,6 @@
 		gap: 4px;
 		padding: 8px 12px;
 		position: relative;
-        align-items: center;
+		align-items: center;
 	}
 </style>

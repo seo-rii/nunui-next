@@ -80,8 +80,7 @@
 		if (_show) {
 			show = true;
 			if (iv) clearTimeout(iv);
-		}
-		else {
+		} else {
 			if (iv) clearTimeout(iv);
 			iv = setTimeout(() => (show = false), 200);
 		}

@@ -1,14 +1,12 @@
 <script lang="ts">
-    import {Input, Paper} from "$lib/index.js";
+	import { Input, Paper } from '$lib/index.js';
 
-    let {
-        placeholder = "",
-    } = $props();
+	let { placeholder = '' } = $props();
 </script>
 
 <Paper>
-    {#snippet target()}
-        <Input {placeholder}/>
-    {/snippet}
-    sdfsdfsdfsdfsdf
+	{#snippet target()}
+		<Input {placeholder} />
+	{/snippet}
+	sdfsdfsdfsdfsdf
 </Paper>

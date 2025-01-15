@@ -6,7 +6,7 @@
 	import Paper from '$lib/paper/Paper.svelte';
 	import CircularProgress from '$lib/progress/CircularProgress.svelte';
 	import { classes } from '$lib/util.svelte.js';
-	import {fade} from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 
 	interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
 		primary?: boolean;
@@ -68,7 +68,12 @@
 </script>
 
 {#snippet button()}
-	<button {...rest} disabled={disabled || loading} class={buttonClass} aria-label={tooltip as string}>
+	<button
+		{...rest}
+		disabled={disabled || loading}
+		class={buttonClass}
+		aria-label={tooltip as string}
+	>
 		{#if icon}
 			<Icon {icon} style={children ? 'margin-right: 4px' : ''} />
 		{/if}
@@ -77,7 +82,7 @@
 			<Ripple {active} />
 		{/if}
 		{#if loading}
-			<div class="loading" transition:fade={{duration: 200}}>
+			<div class="loading" transition:fade={{ duration: 200 }}>
 				<CircularProgress indeterminate {primary} {secondary} />
 			</div>
 		{/if}
@@ -128,7 +133,8 @@
 			box-shadow: color-mix(in srgb, var(--on-surface), transparent 80%) 0 2px 5px 0;
 		}
 
-		&:not(.transparent):not(.outlined):hover:not(:active), &:not(.transparent):not(.outlined):active:not(:active) {
+		&:not(.transparent):not(.outlined):hover:not(:active),
+		&:not(.transparent):not(.outlined):active:not(:active) {
 			box-shadow: color-mix(in srgb, var(--on-surface), transparent 70%) 0 4px 8px 0;
 		}
 
