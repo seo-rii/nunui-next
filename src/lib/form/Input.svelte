@@ -50,7 +50,7 @@
 
 	let id = $derived(_id || getCounter());
 	let onkeyup = $derived(
-		_onkeyup || onsubmit
+		_onkeyup || onsubmit || type === 'number'
 			? (e: KeyboardEvent) => {
 					if (e.key === 'Enter') {
 						if (onsubmit) onsubmit(e);
