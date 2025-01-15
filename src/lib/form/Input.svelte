@@ -57,6 +57,9 @@
 						else (e.target as HTMLElement).blur();
 					}
 					if (_onkeyup) _onkeyup(e);
+					if (type === 'number') {
+						if (!isNaN(+value)) value = +value;
+					}
 				}
 			: null
 	);
@@ -81,7 +84,8 @@
 	<div class="background"></div>
 	<div>
 		{#if multiline}
-			<textarea {id} bind:value placeholder="&nbsp;" {...rest} {onkeyup} bind:this={input}></textarea>
+			<textarea {id} bind:value placeholder="&nbsp;" {...rest} {onkeyup} bind:this={input}
+			></textarea>
 		{:else}
 			<input {id} {type} bind:value placeholder="&nbsp;" {...rest} {onkeyup} bind:this={input} />
 		{/if}
