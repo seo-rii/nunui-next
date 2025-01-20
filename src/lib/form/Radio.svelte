@@ -36,7 +36,16 @@
 	let container = $state<HTMLElement | null>(null);
 </script>
 
-<main bind:this={container} class:primary class:secondary>
+<main
+	bind:this={container}
+	class:primary
+	class:secondary
+	role="presentation"
+	onclick={(e) => {
+		if ((e.target as any)?.tagName !== 'INPUT' && (e.target as any)?.tagName !== 'LABEL') return;
+		target?.click();
+	}}
+>
 	<div>
 		<Ripple extra={container} center />
 		<input {id} type="radio" {name} {value} bind:this={target} bind:group={selected} {...rest} />

@@ -11,6 +11,7 @@
 		hover?: boolean;
 		primary?: boolean;
 		secondary?: boolean;
+		onclick?: (e: MouseEvent) => any;
 	}
 
 	const duration = 400;
@@ -21,7 +22,8 @@
 		clicked = $bindable(false),
 		hover = $bindable(false),
 		primary,
-		secondary
+		secondary,
+		onclick
 	}: RippleProps = $props();
 
 	let x = $state(0),
@@ -108,7 +110,15 @@
 	});
 </script>
 
-<main bind:this={adapter} class:show class:primary class:secondary class="__rp">
+<main
+	bind:this={adapter}
+	class:show
+	class:primary
+	class:secondary
+	class="__rp"
+	{onclick}
+	role="presentation"
+>
 	{#if render.v}
 		<div style:left="{x}px" style:top="{y}px" style:--size="{size}px"></div>
 	{/if}
