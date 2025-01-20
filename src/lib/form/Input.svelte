@@ -10,6 +10,20 @@
 	import type { HTMLInputAttributes, HTMLTextareaAttributes } from 'svelte/elements';
 	import { Icon, Render } from '$lib/index.js';
 	import IconButton from '$lib/button/IconButton.svelte';
+	import autosize from 'autosize';
+
+	const action = (node: HTMLElement) => {
+		autosize(node);
+
+		return {
+			destroy() {
+				autosize.destroy(node);
+			}
+		};
+	};
+
+	action.update = autosize.update;
+	action.destroy = autosize.destroy;
 
 	interface InputProps extends Omit<HTMLInputAttributes & HTMLTextareaAttributes, 'value'> {
 		type?: string;
@@ -25,6 +39,8 @@
 		onsubmit?: (e: Event) => void;
 		input?: HTMLInputElement | HTMLTextAreaElement;
 		block?: boolean;
+		plain?: boolean;
+		autosize?: boolean;
 	}
 
 	let {
@@ -45,6 +61,9 @@
 		input = $bindable<HTMLInputElement | HTMLTextAreaElement>(),
 		block,
 
+		plain = false,
+		autosize: _autosize = false,
+
 		...rest
 	}: InputProps = $props();
 
@@ -64,6 +83,8 @@
 				}
 			: null
 	);
+
+	$effect(() => {});
 </script>
 
 {#snippet additional(target: any, trailing = false)}
@@ -80,13 +101,25 @@
 	{/if}
 {/snippet}
 
-<main class:primary class:secondary class:block>
+<main class:primary class:secondary class:block class:plain>
 	{@render additional(leading)}
 	<div class="background"></div>
 	<div>
 		{#if multiline}
-			<textarea {id} bind:value placeholder="&nbsp;" {...rest} {onkeyup} bind:this={input}
-			></textarea>
+			{#if _autosize}
+				<textarea
+					{id}
+					bind:value
+					placeholder="&nbsp;"
+					{...rest}
+					{onkeyup}
+					bind:this={input}
+					use:action
+				></textarea>
+			{:else}
+				<textarea {id} bind:value placeholder="&nbsp;" {...rest} {onkeyup} bind:this={input}
+				></textarea>
+			{/if}
 		{:else}
 			<input {id} {type} bind:value placeholder="&nbsp;" {...rest} {onkeyup} bind:this={input} />
 		{/if}
@@ -126,6 +159,11 @@
 		&.block {
 			display: flex;
 		}
+
+		&.plain {
+			border-bottom: none;
+			border-radius: 6px;
+		}
 	}
 
 	input,
@@ -141,6 +179,11 @@
 		position: relative;
 		z-index: 1;
 		width: calc(100% - 2em);
+
+		.plain & {
+			border-bottom: none;
+			border-radius: 6px;
+		}
 	}
 
 	.background {
@@ -163,6 +206,11 @@
 			opacity: 1;
 			transform: scaleX(1);
 			transition: all 0.2s ease;
+		}
+
+		.plain & {
+			border-bottom: none;
+			border-radius: 6px;
 		}
 	}
 

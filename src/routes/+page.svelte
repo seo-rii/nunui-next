@@ -11,10 +11,10 @@
 		IconButton,
 		Expand,
 		Select,
-		Table
+		Table,
+		List
 	} from '$lib/index.js';
 	import { tween } from '$lib/util.svelte.js';
-	import List from '../lib/list/List.svelte';
 
 	const val = tween(0.5);
 
@@ -146,7 +146,7 @@
 	<Input bind:value={flag} placeholder="value" type="number" block trailing="restart_alt" />
 </div>
 <br />
-<Input multiline bind:value={flag} placeholder="test" />
+<Input multiline bind:value={flag} placeholder="test" plain autosize />
 <Select placeholder="테스트"></Select>
 
 <Expand hide={flag % 2 === 1}>
