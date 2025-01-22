@@ -43,7 +43,7 @@
 	role="presentation"
 	onclick={(e) => {
 		if ((e.target as any)?.tagName !== 'INPUT' && (e.target as any)?.tagName !== 'LABEL') return;
-		target?.click();
+		//target?.click();
 	}}
 >
 	<div>
