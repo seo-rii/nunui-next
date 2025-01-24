@@ -12,6 +12,7 @@
 		onSurface?: string;
 		mobile?: boolean;
 		local?: boolean;
+		vibrate?: boolean;
 	}
 
 	let server = $state(true);
@@ -32,7 +33,8 @@
 		onSecondary = '#000000',
 		onSurface = '#000000',
 		mobile = false,
-		local = false
+		local = false,
+		vibrate = true
 	}: ThemeProviderProps = $props();
 
 	const style = $derived(`
@@ -49,9 +51,12 @@
         }
     `);
 
-	setContext('mobile', {
-		get v() {
+	setContext('config', {
+		get mobile() {
 			return mobile;
+		},
+		get vibrate() {
+			return vibrate;
 		}
 	});
 </script>

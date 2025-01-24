@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Render } from '$lib/index.js';
+	import { getContext } from 'svelte';
 	import { on } from 'svelte/events';
 
 	let {
@@ -10,6 +11,8 @@
 		...rest
 	} = $props();
 
+	const config = getContext<{ vibrate: boolean }>('config');
+
 	let container = $state<HTMLElement | null>(null);
 	let delta = $state(0),
 		dx = $state(0);
@@ -19,7 +22,8 @@
 		if (!container) return;
 		let from = 0,
 			fx = 0,
-			run = false;
+			run = false,
+			vib = false;
 		const handlers = [
 			on(container, 'touchstart', (e) => {
 				if (!container) return;
@@ -29,6 +33,7 @@
 				from = clientY - top;
 				fx = clientX - left;
 				run = true;
+				vib = false;
 			}),
 			on(container, 'touchmove', (e) => {
 				if (!container) return;
@@ -42,6 +47,10 @@
 				const { top, left } = container.getBoundingClientRect();
 				if (delta + clientY - top - from > 0) e.preventDefault();
 				delta = Math.max(0, delta + clientY - top - from);
+				if (delta > 10 && !vib) {
+					if (config.vibrate) navigator.vibrate(5);
+					vib = true;
+				}
 				dx = dx + clientX - left - fx;
 			}),
 			on(container, 'touchend', (e) => {
@@ -82,6 +91,11 @@
 				(root as HTMLDivElement).appendChild(target as any);
 			}
 		};
+	});
+
+	$effect(() => {
+		let _ = show;
+		if (config.vibrate) navigator.vibrate(10);
 	});
 </script>
 

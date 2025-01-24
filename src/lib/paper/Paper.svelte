@@ -38,7 +38,7 @@
 		onclick?: (e?: any) => void;
 	}
 
-	const mobile = getContext<{ v: boolean }>('mobile');
+	const config = getContext<{ mobile: boolean }>('config');
 	let {
 		children,
 		target,
@@ -65,7 +65,7 @@
 		...rest
 	}: PaperProps = $props();
 
-	let useMobile = $derived(_mobile === undefined ? mobile.v : _mobile);
+	let useMobile = $derived(_mobile === undefined ? config.mobile : _mobile);
 	let hover = delayedToggle(false);
 	let hoverTarget = delayedToggle(false);
 	let show = $state(_show);

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { flushSync } from 'svelte';
+	import { flushSync, getContext } from 'svelte';
 	import { on } from 'svelte/events';
 	import { delayedToggle } from '$lib/util.svelte.js';
 
@@ -25,6 +25,8 @@
 		secondary,
 		onclick
 	}: RippleProps = $props();
+
+	const config = getContext<{ vibrate: boolean }>('config');
 
 	let x = $state(0),
 		y = $state(0),
@@ -69,6 +71,7 @@
 		if (run) return (run = 1);
 		run = 1;
 		if (iv) clearTimeout(iv);
+		if (config.vibrate) navigator.vibrate(5);
 		show = render.r = false;
 		({ x, y, size } = rippleSize(targetX, targetY));
 		startTs = Date.now();
