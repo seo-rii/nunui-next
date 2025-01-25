@@ -23,6 +23,8 @@ import List from '$lib/list/List.svelte';
 import OneLine from '$lib/list/OneLine.svelte';
 import TwoLine from '$lib/list/TwoLine.svelte';
 
+import { addSnackbar, closeSnackbar } from './snackbar.svelte.js';
+
 export {
 	ThemeProvider,
 	Button,
@@ -41,5 +43,7 @@ export {
 	Table,
 	List,
 	OneLine,
-	TwoLine
+	TwoLine,
+	addSnackbar,
+	closeSnackbar
 };

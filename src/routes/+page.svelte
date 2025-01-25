@@ -12,7 +12,8 @@
 		Expand,
 		Select,
 		Table,
-		List
+		List,
+		addSnackbar
 	} from '$lib/index.js';
 	import { tween } from '$lib/util.svelte.js';
 
@@ -65,7 +66,17 @@
 <Button icon="star" secondary raised={flag % 2 === 1} onclick={() => flag++}>sdfsdfsdf</Button>
 <Button light-5 icon="star" secondary large onclick={() => flag++}>sdfsdfsdf</Button>
 <Button icon="star" secondary round onclick={() => flag++}>sdfsdfsdf</Button>
-<Button icon="star" secondary round onclick={() => flag++} />
+<Button
+	icon="star"
+	secondary
+	round
+	onclick={() =>
+		addSnackbar({
+			icon: 'favorite',
+			text: '테스트 스낵바입니다.',
+			actions: [{ text: '확인', onclick: () => alert(1) }]
+		})}
+/>
 <LinearProgress progress={val.value} indeterminate={flag % 2 === 1} />
 <LinearProgress progress={val.value} indeterminate={flag % 2 === 0} secondary />
 <IconButton

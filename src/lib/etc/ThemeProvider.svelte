@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { flushSync, setContext, tick } from 'svelte';
 	import { Render } from '$lib/index.js';
+	import SnackbarContainer from '$lib/etc/SnackbarContainer.svelte';
 
 	interface ThemeProviderProps {
 		children?: any;
@@ -462,3 +463,4 @@
 </svelte:head>
 
 <Render {children} />
+<SnackbarContainer />
