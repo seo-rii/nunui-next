@@ -77,6 +77,7 @@
 			actions: [{ text: '확인', onclick: () => alert(1) }]
 		})}
 />
+<Button icon="star" secondary round disabled>dsfs</Button>
 <LinearProgress progress={val.value} indeterminate={flag % 2 === 1} />
 <LinearProgress progress={val.value} indeterminate={flag % 2 === 0} secondary />
 <IconButton
@@ -88,6 +89,7 @@
 	active={flag % 2 === 1}
 />
 <IconButton icon="favorite" tooltip="테스트" onclick={() => flag++} active={flag % 2 === 1} />
+<IconButton icon="favorite" active={flag % 2 === 1} disabled />
 <Paper tl>
 	{#snippet target()}
 		<Button icon="favorite" tooltip="안녕">sdfsdfsdf</Button>

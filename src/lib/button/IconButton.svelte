@@ -35,7 +35,7 @@
 </script>
 
 {#snippet button()}
-	<button {...rest} bind:this={container}>
+	<button {...rest} {disabled} bind:this={container}>
 		<div class="container" style:--size={+(size as number) ? size + 'px' : size || '1.8em'}>
 			<div class="wrapper" class:flat>
 				<div class="button" class:flat>
@@ -47,6 +47,8 @@
 				</div>
 				{#if !disabled}
 					<Ripple center bind:clicked bind:hover {active} extra={container} {primary} {secondary} />
+				{:else}
+					<div class="block"></div>
 				{/if}
 			</div>
 			{#if label}
@@ -75,6 +77,20 @@
 		background: transparent;
 		padding: 0;
 		color: var(--on-surface);
+		overflow: hidden;
+		position: relative;
+
+		.block {
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			opacity: 0.5;
+			z-index: 1;
+			background: var(--surface);
+			cursor: not-allowed;
+		}
 
 		.container {
 			display: flex;

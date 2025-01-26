@@ -80,6 +80,8 @@
 		<Render {children} />
 		{#if !disabled}
 			<Ripple {active} />
+		{:else}
+			<div class="block"></div>
 		{/if}
 		{#if loading}
 			<div class="loading" transition:fade={{ duration: 200 }}>
@@ -114,6 +116,20 @@
 			box-shadow 0.3s,
 			color 0.3s;
 		line-height: 1em;
+		overflow: hidden;
+		position: relative;
+
+		.block {
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			opacity: 0.5;
+			z-index: 1;
+			background: var(--surface);
+			cursor: not-allowed;
+		}
 
 		&.small {
 			padding: calc(5px - var(--border, 0px)) calc(10px - var(--border, 0px));
@@ -129,12 +145,12 @@
 			border-radius: 1000px;
 		}
 
-		&.raised:not(:active) {
+		&.raised:not(:active):not(:disabled) {
 			box-shadow: color-mix(in srgb, var(--on-surface), transparent 80%) 0 2px 5px 0;
 		}
 
-		&:not(.transparent):not(.outlined):hover:not(:active),
-		&:not(.transparent):not(.outlined):active:not(:active) {
+		&:not(.transparent):not(.outlined):hover:not(:active):not(:disabled),
+		&:not(.transparent):not(.outlined):active:not(:active):not(:disabled) {
 			box-shadow: color-mix(in srgb, var(--on-surface), transparent 70%) 0 4px 8px 0;
 		}
 
