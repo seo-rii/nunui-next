@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { flushSync, setContext, tick } from 'svelte';
 	import { Render } from '$lib/index.js';
-	import SnackbarContainer from '$lib/etc/SnackbarContainer.svelte';
+	import SnackbarContainer from '$lib/notify/SnackbarContainer.svelte';
+	import DialogContainer from '$lib/notify/DialogContainer.svelte';
 
 	interface ThemeProviderProps {
 		children?: any;
@@ -464,3 +465,4 @@
 
 <Render {children} />
 <SnackbarContainer />
+<DialogContainer />

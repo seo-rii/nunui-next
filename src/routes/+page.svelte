@@ -13,7 +13,8 @@
 		Select,
 		Table,
 		List,
-		addSnackbar
+		addSnackbar,
+		addDialog
 	} from '$lib/index.js';
 	import { tween } from '$lib/util.svelte.js';
 
@@ -75,8 +76,21 @@
 			icon: 'favorite',
 			text: '테스트 스낵바입니다.',
 			actions: [{ text: '확인', onclick: () => alert(1) }]
-		})}
-/>
+		})}>Snackbar</Button
+>
+<Button
+	icon="star"
+	secondary
+	round
+	onclick={() =>
+		addDialog({
+			icon: 'favorite',
+			title: '다이얼로그',
+			text: '테스트 다이얼로그 입니다.',
+			actions: [{ text: '확인', onclick: () => alert(1) }]
+		})}>Dialog</Button
+>
+
 <Button icon="star" secondary round disabled>dsfs</Button>
 <LinearProgress progress={val.value} indeterminate={flag % 2 === 1} />
 <LinearProgress progress={val.value} indeterminate={flag % 2 === 0} secondary />
@@ -155,7 +169,7 @@
 	leading="search"
 	trailing={{ icon: 'close', onclick: () => (flag = 0), tooltip: '초기화' }}
 />
-<div style="width: 500px">
+<div style="width: 200px">
 	<Input bind:value={flag} placeholder="value" type="number" block trailing="restart_alt" />
 </div>
 <br />

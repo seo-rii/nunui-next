@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { Ripple, Icon, Paper } from '$lib/index.js';
+	import { fade } from 'svelte/transition';
 
 	interface IconButtonProps extends HTMLAttributes<HTMLButtonElement> {
 		flat?: boolean;
@@ -48,7 +49,7 @@
 				{#if !disabled}
 					<Ripple center bind:clicked bind:hover {active} extra={container} {primary} {secondary} />
 				{:else}
-					<div class="block"></div>
+					<div class="block" transition:fade={{ duration: 200 }}></div>
 				{/if}
 			</div>
 			{#if label}

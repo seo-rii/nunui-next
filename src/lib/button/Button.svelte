@@ -81,7 +81,7 @@
 		{#if !disabled}
 			<Ripple {active} />
 		{:else}
-			<div class="block"></div>
+			<div class="block" transition:fade={{ duration: 200 }}></div>
 		{/if}
 		{#if loading}
 			<div class="loading" transition:fade={{ duration: 200 }}>

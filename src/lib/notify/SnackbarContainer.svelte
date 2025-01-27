@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { closeSnackbar, type ISnackbar, snack } from '$lib/snackbar.svelte.js';
+	import { closeSnackbar, type ISnackbar, snack } from '$lib/notify/snackbar.svelte.js';
 	import { cubicIn, quartOut } from 'svelte/easing';
 	import Icon from '$lib/etc/Icon.svelte';
 	import Button from '$lib/button/Button.svelte';
@@ -79,7 +79,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		min-width: min(100vw, 400px);
+		min-width: min(calc(100vw - 48px), 400px);
 		margin-top: -34px;
 		z-index: 999;
 		position: relative;
