@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { cubicIn, quartOut } from 'svelte/easing';
+	import { quartOut } from 'svelte/easing';
 	import Icon from '$lib/etc/Icon.svelte';
 	import Button from '$lib/button/Button.svelte';
-	import IconButton from '$lib/button/IconButton.svelte';
 	import { closeDialog, type IDialog, dialog } from './dialog.svelte.js';
 	import { fade } from 'svelte/transition';
-	import Render from '../etc/Render.svelte';
+	import Render from '$lib/etc/Render.svelte';
 
 	function int(node: Element) {
 		return {
@@ -32,7 +31,7 @@
 
 {#snippet dialogUI(dialog: IDialog)}
 	{#key dialog.id}
-		<article in:int|global out:out|global>
+		<article in:int|global out:out|global style:--mw={dialog.maxWidth}>
 			<span class="title"><Icon icon={dialog.icon} />{dialog.title}</span>
 			<span class="text">
 				{dialog.text}
@@ -43,13 +42,15 @@
 					<Comp />
 				{/if}
 			</span>
-			<div class="act">
-				{#each dialog.actions || [] as act}
-					<Button small transparent icon={act.icon} onclick={act.onclick}>
-						{act.text}
-					</Button>
-				{/each}
-			</div>
+			{#if dialog.actions?.length}
+				<div class="act">
+					{#each dialog.actions || [] as act}
+						<Button small transparent icon={act.icon} onclick={act.onclick}>
+							{act.text}
+						</Button>
+					{/each}
+				</div>
+			{/if}
 		</article>
 	{/key}
 {/snippet}
@@ -94,16 +95,12 @@
 		background: var(--primary-light1);
 		border-radius: 12px;
 		box-shadow: color-mix(in srgb, var(--on-surface), transparent 80%) 0 2px 5px 0;
-		display: flex;
-		flex-direction: column;
 		justify-content: center;
-		min-width: min(calc(100svw - 48px), 500px);
+		min-width: min(calc(100svw - 48px), var(--mw, 500px));
 		max-width: calc(100svw - 48px);
-		max-height: calc(100svh - 48px);
+		max-height: calc(100svh - 56px);
 		overflow-y: auto;
-		margin-top: -34px;
 		position: relative;
-		gap: 12px;
 
 		transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
 	}
@@ -114,6 +111,7 @@
 		display: flex;
 		align-items: center;
 		gap: 4px;
+		margin-bottom: 8px;
 	}
 
 	.text {
@@ -121,9 +119,10 @@
 	}
 
 	.act {
-		align-self: flex-end;
+		justify-content: flex-end;
 		display: flex;
 		align-items: center;
 		gap: 4px;
+		margin-top: 6px;
 	}
 </style>

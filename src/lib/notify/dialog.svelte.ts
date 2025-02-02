@@ -3,7 +3,7 @@ import type { Component, Snippet } from 'svelte';
 export interface IDialog {
 	icon?: string;
 	title: string;
-	text: string;
+	text?: string;
 	snip?: Snippet;
 	comp?: Component;
 	actions?: {
@@ -15,6 +15,7 @@ export interface IDialog {
 	dismissable?: boolean;
 
 	id?: number;
+	maxWidth?: string;
 }
 
 export class DialogState {
