@@ -97,7 +97,10 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
-		min-width: min(calc(100vw - 48px), 500px);
+		min-width: min(calc(100svw - 48px), 500px);
+		max-width: calc(100svw - 48px);
+		max-height: calc(100svh - 48px);
+		overflow-y: auto;
 		margin-top: -34px;
 		position: relative;
 		gap: 12px;
