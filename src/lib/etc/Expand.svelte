@@ -3,7 +3,7 @@
 	import { Render } from '$lib/index.js';
 	import { flushSync } from 'svelte';
 
-	let { children, hide = false, initial = false, bindWidth = false } = $props();
+	let { children, hide = false, initial = false, bindWidth = false, ...rest } = $props();
 
 	let clientHeight = $state(0),
 		clientWidth = $state(0),
@@ -20,7 +20,7 @@
 	});
 </script>
 
-<main style:--height="{height}px" class:active bind:clientWidth>
+<main style:--height="{height}px" class:active bind:clientWidth {...rest}>
 	{#if render.v}
 		<div bind:clientHeight style:--width="{clientWidth}px" class:bindWidth>
 			<Render {children} />
