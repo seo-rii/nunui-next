@@ -71,7 +71,7 @@
 		if (run) return (run = 1);
 		run = 1;
 		if (iv) clearTimeout(iv);
-		if (config.vibrate) navigator.vibrate(5);
+		if (config?.vibrate && typeof navigator.vibrate === 'function') navigator.vibrate(5);
 		show = render.r = false;
 		({ x, y, size } = rippleSize(targetX, targetY));
 		startTs = Date.now();

@@ -48,7 +48,7 @@
 				if (delta + clientY - top - from > 0) e.preventDefault();
 				delta = Math.max(0, delta + clientY - top - from);
 				if (delta > 10 && !vib) {
-					if (config.vibrate) navigator.vibrate(5);
+					if (config?.vibrate && typeof navigator.vibrate === 'function') navigator.vibrate(5);
 					vib = true;
 				}
 				dx = dx + clientX - left - fx;
@@ -95,7 +95,7 @@
 
 	$effect(() => {
 		let _ = show;
-		if (config.vibrate) navigator.vibrate(10);
+		if (config?.vibrate && typeof navigator.vibrate === 'function') navigator.vibrate(10);
 	});
 </script>
 
