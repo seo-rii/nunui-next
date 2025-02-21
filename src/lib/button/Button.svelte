@@ -69,6 +69,7 @@
 
 {#snippet button()}
 	<button
+		type="button"
 		{...rest}
 		disabled={disabled || loading}
 		class={buttonClass}

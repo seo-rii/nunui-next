@@ -36,7 +36,7 @@
 </script>
 
 {#snippet button()}
-	<button {...rest} {disabled} bind:this={container}>
+	<button type="button" {...rest} {disabled} bind:this={container}>
 		<div class="container" style:--size={+(size as number) ? size + 'px' : size || '1.8em'}>
 			<div class="wrapper" class:flat>
 				<div class="button" class:flat>
