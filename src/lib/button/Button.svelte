@@ -52,15 +52,15 @@
 		classes(
 			className as any,
 			{
-				primary,
-				secondary,
-				outlined,
-				transparent,
-				raised,
-				round,
-				small,
-				large,
-				full
+				_p: primary,
+				_s: secondary,
+				o: outlined,
+				t: transparent,
+				r: raised,
+				c: round,
+				s: small,
+				l: large,
+				f: full
 			},
 			Object.keys(rest).filter((x) => x.startsWith('light-') || x.startsWith('dark-'))
 		)
@@ -85,7 +85,7 @@
 			<div class="block" transition:fade={{ duration: 200 }}></div>
 		{/if}
 		{#if loading}
-			<div class="loading" transition:fade={{ duration: 200 }}>
+			<div class="ld" transition:fade={{ duration: 200 }}>
 				<CircularProgress indeterminate {primary} {secondary} />
 			</div>
 		{/if}
@@ -132,26 +132,26 @@
 			cursor: not-allowed;
 		}
 
-		&.small {
+		&.s {
 			padding: calc(5px - var(--border, 0px)) calc(10px - var(--border, 0px));
 			font-size: 0.8rem;
 		}
 
-		&.large {
+		&.l {
 			padding: calc(15px - var(--border, 0px)) calc(30px - var(--border, 0px));
 			font-size: 1.2rem;
 		}
 
-		&.round {
+		&.c {
 			border-radius: 1000px;
 		}
 
-		&.raised:not(:active):not(:disabled) {
+		&.r:not(:active):not(:disabled) {
 			box-shadow: color-mix(in srgb, var(--on-surface), transparent 80%) 0 2px 5px 0;
 		}
 
-		&:not(.transparent):not(.outlined):hover:not(:active):not(:disabled),
-		&:not(.transparent):not(.outlined):active:not(:active):not(:disabled) {
+		&:not(.t):not(.o):hover:not(:active):not(:disabled),
+		&:not(.t):not(.o):active:not(:active):not(:disabled) {
 			box-shadow: color-mix(in srgb, var(--on-surface), transparent 70%) 0 4px 8px 0;
 		}
 
@@ -159,12 +159,12 @@
 			box-shadow: none;
 		}
 
-		&.full {
+		&.f {
 			display: block;
 			width: 100%;
 		}
 
-		&.outlined {
+		&.o {
 			--on-theme: var(--theme);
 			background: transparent;
 			color: var(--theme);
@@ -172,13 +172,13 @@
 			--border: 1px;
 		}
 
-		&.transparent {
+		&.t {
 			--on-theme: var(--theme);
 			background: transparent;
 			color: var(--theme);
 		}
 
-		.loading {
+		.ld {
 			position: absolute;
 			top: 0;
 			left: 0;

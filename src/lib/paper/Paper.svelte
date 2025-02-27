@@ -113,7 +113,7 @@
 	{#if show}
 		{#if useMobile}
 			<PaperMobile bind:show={_show} onclick={() => (ig = true)} {remap} {...rest}>
-				<div class="mobile" class:dense use:hovering={hoverTarget}>
+				<div class="m" class:dense use:hovering={hoverTarget}>
 					<Render {children} />
 				</div>
 			</PaperMobile>
@@ -132,7 +132,7 @@
 				{br}
 				{...rest}
 			>
-				<div class="desktop" class:dense use:hovering={hoverTarget}>
+				<div class="d" class:dense use:hovering={hoverTarget}>
 					<Render {children} />
 				</div>
 			</PaperDesktop>
@@ -153,11 +153,11 @@
 		}
 	}
 
-	.desktop {
+	.d {
 		padding: 4px;
 	}
 
-	.mobile {
+	.m {
 		padding: 12px;
 	}
 

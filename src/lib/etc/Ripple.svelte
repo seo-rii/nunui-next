@@ -115,10 +115,10 @@
 
 <main
 	bind:this={adapter}
-	class:show
+	class:s={show}
 	class:_p={primary}
 	class:_s={secondary}
-	class="__rp"
+	class="_r"
 	{onclick}
 	role="presentation"
 >
@@ -128,10 +128,10 @@
 </main>
 
 {#if back.v}
-	<span class:exit={!back.r} class:center></span>
+	<span class:e={!back.r} class:c={center}></span>
 {/if}
 {#if active.v}
-	<span class:exit={!active.r} class:center></span>
+	<span class:e={!active.r} class:c={center}></span>
 {/if}
 
 <style lang="scss">
@@ -139,12 +139,12 @@
 		pointer-events: none;
 	}
 
-	:global(*:has(> .__rp)) {
+	:global(*:has(> ._r)) {
 		position: relative;
 		overflow: hidden;
 	}
 
-	.center {
+	.c {
 		border-radius: 100px;
 	}
 
@@ -157,7 +157,7 @@
 		transition: opacity 0.2s ease;
 		opacity: 0;
 
-		&.show {
+		&.s {
 			opacity: var(--opacity, 0.3);
 		}
 	}
@@ -186,7 +186,7 @@
 		opacity: var(--opacity, 0.2);
 		animation: fadeIn var(--dur, 200ms) ease forwards;
 
-		&.exit {
+		&.e {
 			animation: fadeOut var(--dur, 200ms) ease forwards;
 		}
 	}
