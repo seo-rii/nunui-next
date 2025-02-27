@@ -38,8 +38,8 @@
 
 <main
 	bind:this={container}
-	class:primary
-	class:secondary
+	class:_p={primary}
+	class:_s={secondary}
 	role="presentation"
 	onclick={(e) => {
 		if ((e.target as any)?.tagName !== 'INPUT' && (e.target as any)?.tagName !== 'LABEL') return;

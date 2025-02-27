@@ -119,6 +119,7 @@
 			inherits: true;
 		}
 
+		*._p,
 		*.primary {
 			--theme: var(--primary);
 			--theme-light1: var(--primary-light1);
@@ -164,6 +165,7 @@
 			--on-theme: var(--on-primary);
 		}
 
+		*._s,
 		*.secondary {
 			--theme: var(--secondary);
 			--theme-light1: var(--secondary-light1);

@@ -101,7 +101,7 @@
 	{/if}
 {/snippet}
 
-<main class:primary class:secondary class:block class:plain>
+<main class:_p={primary} class:_s={secondary} class:block class:plain>
 	{@render additional(leading)}
 	<div class="background"></div>
 	<div>

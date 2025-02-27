@@ -48,7 +48,7 @@
 	let progress = $derived(stop ? 1 : start ? 0 : _progress);
 </script>
 
-<main {style} class:primary class:secondary>
+<main {style} class:_p={primary} class:_s={secondary}>
 	<div class="line"></div>
 	{#if indeterminate || lastIndeterminate}
 		<div class="indicator ind-1" class:exit={start} style:background></div>

@@ -52,8 +52,8 @@
 	height="35px"
 	viewBox="0 0 70 70"
 	xmlns="http://www.w3.org/2000/svg"
-	class:primary
-	class:secondary
+	class:_p={primary}
+	class:_s={secondary}
 	{...rest}
 >
 	<circle

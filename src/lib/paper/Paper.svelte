@@ -99,8 +99,8 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <main
-	class:inlineBlock
-	class:block
+	class:i={inlineBlock}
+	class:b={block}
 	onclick={(e) => {
 		onclick?.(e);
 		if (ig) return;
@@ -144,11 +144,11 @@
 	main {
 		position: relative;
 
-		&.block {
+		&.b {
 			display: block;
 		}
 
-		&.inlineBlock {
+		&.i {
 			display: inline-block;
 		}
 	}

@@ -116,8 +116,8 @@
 <main
 	bind:this={adapter}
 	class:show
-	class:primary
-	class:secondary
+	class:_p={primary}
+	class:_s={secondary}
 	class="__rp"
 	{onclick}
 	role="presentation"
