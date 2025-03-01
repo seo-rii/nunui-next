@@ -6,8 +6,8 @@
 		style?: string;
 		children?: any;
 		header?: any;
-		stickyTop?: boolean | number;
-		stickyLeft?: boolean | number;
+		stickyTop?: boolean | number | string | null;
+		stickyLeft?: boolean | number | string | null;
 	}
 
 	let {
@@ -19,9 +19,10 @@
 		...rest
 	}: TableProps = $props();
 
-	function parseSticky(v: boolean | number | string | undefined) {
+	function parseSticky(v: boolean | number | string | undefined | null) {
 		if (v === true) return '0px';
-		else if (!isNaN(+(v as any))) return v + 'px';
+		else if (v === false || v === undefined || v === null) return '';
+		else if (!isNaN(+v)) return v + 'px';
 		else return (v || '').toString();
 	}
 
