@@ -19,13 +19,17 @@
 		...rest
 	}: TableProps = $props();
 
-	let st = $derived(_st || _st === 0);
-	let sl = $derived(_sl || _sl === 0);
-	let stv = $derived((_st === true ? 0 : _st || 0) + 'px');
-	let slv = $derived((_sl === true ? 0 : _sl || 0) + 'px');
+	function parseSticky(v: boolean | number | string | undefined) {
+		if (v === true) return '0px';
+		else if (!isNaN(+(v as any))) return v + 'px';
+		else return (v || '').toString();
+	}
+
+	let st = $derived(parseSticky(_st));
+	let sl = $derived(parseSticky(_sl));
 </script>
 
-<main {style} class:st class:sl style:--stv={stv} style:--slv={slv}>
+<main {style} class:st class:sl style:--stv={st} style:--slv={sl}>
 	<table {...rest}>
 		<thead>
 			<Render it={header} />
