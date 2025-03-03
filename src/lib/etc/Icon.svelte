@@ -25,7 +25,7 @@
 	let _color = $derived(color ? `color:${color};` : '');
 	let _size = $derived(size ? `font-size:${size}px;` : '');
 
-	let style = $derived(`${_fill}${_weight}${_color}${_size}${_style}`);
+	let style = $derived(`${_fill}${_weight}${_color}${_size}${_style}` || undefined);
 	let icon = $derived(_icon || Object.keys(rest)[0]);
 </script>
 
