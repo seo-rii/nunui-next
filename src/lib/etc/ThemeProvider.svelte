@@ -18,15 +18,6 @@
 		vibrate?: boolean;
 	}
 
-	let server = $state(true);
-	let client = $state(false);
-
-	$effect(() => {
-		client = true;
-		flushSync();
-		tick().then(() => (server = false));
-	});
-
 	let {
 		children,
 		primary = '#6200EE',
@@ -54,12 +45,7 @@
 </script>
 
 <svelte:head>
-	{#if server}
-		{@html style}
-	{/if}
-	{#if client}
-		{@html style}
-	{/if}
+	{@html style}
 </svelte:head>
 
 <Render {children} />
