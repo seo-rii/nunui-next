@@ -16,6 +16,8 @@ export interface IDialog {
 
 	id?: number;
 	maxWidth?: string;
+
+	front?: boolean;
 }
 
 export class DialogState {
@@ -25,7 +27,8 @@ export class DialogState {
 	newId = $state(0);
 
 	add(dialog: IDialog) {
-		this.list.push({ ...dialog, id: this.newId++ });
+		if (dialog.front) this.list.unshift({ ...dialog, id: this.newId++ });
+		else this.list.push({ ...dialog, id: this.newId++ });
 	}
 
 	close() {
