@@ -134,7 +134,7 @@
 	<span class:e={!active.r} class:c={center}></span>
 {/if}
 
-<style lang="scss">
+<style>
 	* {
 		pointer-events: none;
 	}

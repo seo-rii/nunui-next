@@ -33,7 +33,7 @@
 	<Render {children} />
 </div>
 
-<style lang="scss">
+<style>
 	div {
 		display: flex;
 		flex-direction: column;

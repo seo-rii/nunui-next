@@ -25,7 +25,7 @@
 	<Ripple {active} />
 </main>
 
-<style lang="scss">
+<style>
 	main {
 		display: flex;
 		gap: 4px;

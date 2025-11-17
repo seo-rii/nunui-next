@@ -39,7 +39,7 @@
 	</table>
 </main>
 
-<style lang="scss">
+<style>
 	main {
 		width: 100%;
 		position: relative;
@@ -50,19 +50,19 @@
 		}
 
 		&.sl {
-			:global(tbody tr:nth-child(even) > *:first-child) {
+			& :global(tbody tr:nth-child(even) > *:first-child) {
 				background: var(--primary-light1);
 			}
 
-			:global(tr:nth-child(odd) > *:first-child) {
+			& :global(tr:nth-child(odd) > *:first-child) {
 				background: var(--surface);
 			}
 
-			:global(tbody tr:hover > *:first-child) {
+			& :global(tbody tr:hover > *:first-child) {
 				background: var(--primary-light3);
 			}
 
-			:global(tr > *:first-child) {
+			& :global(tr > *:first-child) {
 				position: sticky;
 				left: var(--slv);
 				z-index: 1;
@@ -72,7 +72,7 @@
 	}
 
 	.st {
-		:global(thead th) {
+		& :global(thead th) {
 			z-index: 1;
 			background: var(--surface);
 		}
@@ -89,72 +89,70 @@
 		max-width: 100vw;
 		--r: 12px;
 
-		:global {
-			th {
-				padding: 12px;
-				font-weight: 600;
-				text-align: left;
-				position: relative;
+		& :global(th) {
+			padding: 12px;
+			font-weight: 600;
+			text-align: left;
+			position: relative;
 
-				&:first-child {
-					border-top-left-radius: var(--r);
-					border-bottom-left-radius: var(--r);
-				}
-
-				&:last-child {
-					border-top-right-radius: var(--r);
-					border-bottom-right-radius: var(--r);
-				}
-
-				&:after {
-					position: absolute;
-					content: '';
-					bottom: 0;
-					left: 0;
-					right: 0;
-					height: 1px;
-					border-bottom: 1px solid var(--primary-light3);
-				}
-
-				&:first-child:after {
-					left: 12px;
-				}
-
-				&:last-child:after {
-					right: 12px;
-				}
+			&:first-child {
+				border-top-left-radius: var(--r);
+				border-bottom-left-radius: var(--r);
 			}
 
-			tbody tr:hover {
-				background-color: var(--primary-light3);
-				--r: 18px;
+			&:last-child {
+				border-top-right-radius: var(--r);
+				border-bottom-right-radius: var(--r);
 			}
 
-			tr {
-				transition: background 0.2s ease-in-out;
-
-				&:nth-child(even) {
-					background-color: var(--primary-light1);
-				}
-
-				&:active {
-					--r: 24px;
-				}
+			&:after {
+				position: absolute;
+				content: '';
+				bottom: 0;
+				left: 0;
+				right: 0;
+				height: 1px;
+				border-bottom: 1px solid var(--primary-light3);
 			}
 
-			td {
-				padding: 10px;
-				transition: all 0.2s ease-in-out;
+			&:first-child:after {
+				left: 12px;
+			}
 
-				&:first-child {
-					border-top-left-radius: var(--r);
-					border-bottom-left-radius: var(--r);
-				}
+			&:last-child:after {
+				right: 12px;
+			}
+		}
 
-				&:last-child {
-					border-top-right-radius: var(--r);
-					border-bottom-right-radius: var(--r);
-				}
+		& :global(tbody tr:hover) {
+			background-color: var(--primary-light3);
+			--r: 18px;
+		}
+
+		& :global(tr) {
+			transition: background 0.2s ease-in-out;
+
+			&:nth-child(even) {
+				background-color: var(--primary-light1);
+			}
+
+			&:active {
+				--r: 24px;
+			}
+		}
+
+		& :global(td) {
+			padding: 10px;
+			transition: all 0.2s ease-in-out;
+
+			&:first-child {
+				border-top-left-radius: var(--r);
+				border-bottom-left-radius: var(--r);
+			}
+
+			&:last-child {
+				border-top-right-radius: var(--r);
+				border-bottom-right-radius: var(--r);
 			}
 		}
 	}

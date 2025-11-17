@@ -35,7 +35,7 @@
 	{/if}
 </main>
 
-<style lang="scss">
+<style>
 	main {
 		overflow: hidden;
 		position: relative;
@@ -47,7 +47,7 @@
 
 			height: var(--height);
 
-			div {
+			& div {
 				position: absolute;
 
 				&.bindWidth {

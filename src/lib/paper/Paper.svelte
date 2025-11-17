@@ -140,7 +140,7 @@
 	{/if}
 </main>
 
-<style lang="scss">
+<style>
 	main {
 		position: relative;
 

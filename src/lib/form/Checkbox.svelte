@@ -61,7 +61,7 @@
 	{/if}
 </main>
 
-<style lang="scss">
+<style>
 	@keyframes short-intro {
 		0% {
 			transform: scaleY(-1) translate(7px, -14px) rotate(45deg) scaleY(0);
@@ -99,27 +99,27 @@
 		transform: scaleY(-1) translate(7px, -14px) rotate(45deg);
 		fill: var(--r-on-theme);
 		opacity: 0;
-
-		input:checked ~ svg > & {
-			opacity: 1;
-
-			&.short {
-				animation: short-intro 0.2s;
-			}
-
-			&.long {
-				animation: long-intro 0.2s;
-			}
-		}
 	}
 
 	main {
 		display: inline-block;
 		--r-on-theme: var(--on-theme);
 
-		> * {
+		& > * {
 			--on-theme: var(--theme);
 		}
+	}
+
+	main input:checked ~ svg > rect {
+		opacity: 1;
+	}
+
+	main input:checked ~ svg > rect.short {
+		animation: short-intro 0.2s;
+	}
+
+	main input:checked ~ svg > rect.long {
+		animation: long-intro 0.2s;
 	}
 
 	div {

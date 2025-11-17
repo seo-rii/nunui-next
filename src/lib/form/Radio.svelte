@@ -57,7 +57,7 @@
 	{/if}
 </main>
 
-<style lang="scss">
+<style>
 	* {
 		cursor: pointer;
 	}

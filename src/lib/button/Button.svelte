@@ -102,7 +102,7 @@
 	{@render button()}
 {/if}
 
-<style lang="scss">
+<style>
 	button {
 		-webkit-appearance: none;
 		appearance: none;
@@ -120,7 +120,7 @@
 		overflow: hidden;
 		position: relative;
 
-		.block {
+		& .block {
 			position: absolute;
 			left: 0;
 			right: 0;
@@ -178,7 +178,7 @@
 			color: var(--theme);
 		}
 
-		.ld {
+		& .ld {
 			position: absolute;
 			top: 0;
 			left: 0;

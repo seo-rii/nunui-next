@@ -64,7 +64,7 @@
 	{/if}
 </main>
 
-<style lang="scss">
+<style>
 	main {
 		border-radius: 100px;
 		position: relative;

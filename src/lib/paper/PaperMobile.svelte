@@ -118,7 +118,7 @@
 	</main>
 </div>
 
-<style lang="scss">
+<style>
 	.scrim {
 		position: fixed;
 		top: 0;
@@ -146,7 +146,7 @@
 		top: 0;
 		background: var(--surface);
 
-		.handle {
+		& .handle {
 			height: 4px;
 			width: 48px;
 			border-radius: 2px;

@@ -66,7 +66,7 @@
 	</main>
 {/if}
 
-<style lang="scss">
+<style>
 	.scrim {
 		position: fixed;
 		top: 0;

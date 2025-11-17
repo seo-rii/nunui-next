@@ -160,7 +160,7 @@
 	</main>
 </div>
 
-<style lang="scss">
+<style>
 	main {
 		box-shadow: 0 0 10px color-mix(in srgb, var(--on-surface) 16%, transparent);
 		background: var(--surface);

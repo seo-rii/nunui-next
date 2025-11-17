@@ -69,7 +69,7 @@
 	{@render button()}
 {/if}
 
-<style lang="scss">
+<style>
 	button {
 		-webkit-appearance: none;
 		appearance: none;
@@ -81,7 +81,7 @@
 		overflow: hidden;
 		position: relative;
 
-		.block {
+		& .block {
 			position: absolute;
 			left: 0;
 			right: 0;
@@ -93,18 +93,18 @@
 			cursor: not-allowed;
 		}
 
-		.container {
+		& .container {
 			display: flex;
 			flex-direction: column;
 			cursor: pointer;
 
-			.label {
+			& .label {
 				margin-top: 2px;
 				font-size: calc(var(--size) * 0.4);
 				text-align: center;
 			}
 
-			.wrapper {
+			& .wrapper {
 				border-radius: 100px;
 				display: inline-block;
 				position: relative;
@@ -119,7 +119,7 @@
 					height: calc(var(--size) * 0.75);
 				}
 
-				.button {
+				& .button {
 					width: var(--size);
 					height: var(--size);
 					display: flex;

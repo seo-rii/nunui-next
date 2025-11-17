@@ -99,7 +99,7 @@
 	{/if}
 </svg>
 
-<style lang="scss">
+<style>
 	@keyframes fadeIn {
 		0% {
 			opacity: 0;

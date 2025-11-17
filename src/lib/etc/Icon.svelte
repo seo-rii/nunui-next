@@ -31,7 +31,7 @@
 
 <span class="notranslate" {style} aria-hidden="true" data-nosnippet {...rest}>{icon}</span>
 
-<style lang="scss">
+<style>
 	@font-face {
 		font-family: 'Material Symbols Rounded';
 		font-style: normal;

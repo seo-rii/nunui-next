@@ -130,7 +130,7 @@
 	{@render additional(trailing, true)}
 </main>
 
-<style lang="scss">
+<style>
 	span {
 		position: relative;
 		z-index: 1;
@@ -143,7 +143,7 @@
 			margin: 0 0.6em 0 -0.4em;
 		}
 
-		:global(span) {
+		& :global(span) {
 			vertical-align: unset;
 		}
 	}
@@ -179,11 +179,6 @@
 		position: relative;
 		z-index: 1;
 		width: calc(100% - 2em);
-
-		.plain & {
-			border-bottom: none;
-			border-radius: 6px;
-		}
 	}
 
 	.background {
@@ -208,10 +203,6 @@
 			transition: all 0.2s ease;
 		}
 
-		.plain & {
-			border-bottom: none;
-			border-radius: 6px;
-		}
 	}
 
 	div {
@@ -230,10 +221,21 @@
 		opacity: 0.7;
 		color: var(--on-surface);
 
-		*:focus ~ &,
-		*:not(:placeholder-shown) ~ & {
-			transform: translate(0.7em, 0.26em) scale(0.72);
-			transform-origin: 0 0;
-		}
+	}
+
+	main.plain :is(input, textarea) {
+		border-bottom: none;
+		border-radius: 6px;
+	}
+
+	main.plain .background {
+		border-bottom: none;
+		border-radius: 6px;
+	}
+
+	main :is(input, textarea):focus ~ label,
+	main :is(input, textarea):not(:placeholder-shown) ~ label {
+		transform: translate(0.7em, 0.26em) scale(0.72);
+		transform-origin: 0 0;
 	}
 </style>

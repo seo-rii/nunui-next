@@ -57,7 +57,7 @@
 	</main>
 {/if}
 
-<style lang="scss">
+<style>
 	main {
 		position: fixed;
 		bottom: 0;
