@@ -9,7 +9,7 @@ export interface IDialog {
 	actions?: {
 		icon?: string;
 		text: string;
-		onclick: () => void;
+		onclick: () => void | Promise<unknown>;
 	}[];
 	onclose?: () => void;
 	dismissable?: boolean;

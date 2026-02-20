@@ -6,6 +6,30 @@
 	import { fade } from 'svelte/transition';
 	import Render from '$lib/etc/Render.svelte';
 
+	type DialogAction = NonNullable<IDialog['actions']>[number];
+
+	let actionLoading = $state<Record<string, boolean>>({});
+	let activeDialogId = $derived(dialog.active?.id ?? -1);
+
+	const isPromiseLike = (value: unknown): value is Promise<unknown> =>
+		typeof value === 'object' &&
+		value !== null &&
+		'then' in value &&
+		typeof (value as { then?: unknown }).then === 'function';
+
+	const actionKey = (index: number) => `${activeDialogId}:${index}`;
+
+	const runAction = (action: DialogAction, index: number) => {
+		const key = actionKey(index);
+		if (actionLoading[key]) return;
+		const result = action.onclick();
+		if (!isPromiseLike(result)) return;
+		actionLoading[key] = true;
+		result.finally(() => {
+			actionLoading[key] = false;
+		});
+	};
+
 	function int(node: Element) {
 		return {
 			duration: 200,
@@ -44,8 +68,14 @@
 			</span>
 			{#if dialog.actions?.length}
 				<div class="act">
-					{#each dialog.actions || [] as act}
-						<Button small transparent icon={act.icon} onclick={act.onclick}>
+					{#each dialog.actions || [] as act, index (index)}
+						<Button
+							small
+							transparent
+							icon={act.icon}
+							loading={!!actionLoading[actionKey(index)]}
+							onclick={() => runAction(act, index)}
+						>
 							{act.text}
 						</Button>
 					{/each}
@@ -67,16 +97,6 @@
 {/if}
 
 <style>
-	.scrim {
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: rgba(0, 0, 0, 0.5);
-		z-index: 998;
-	}
-
 	main {
 		position: fixed;
 		bottom: 0;
