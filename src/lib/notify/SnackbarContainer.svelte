@@ -30,19 +30,29 @@
 
 {#snippet snackbar(snack: ISnackbar, i: number)}
 	{#key snack.id}
-		<article in:int|global={i} out:out|global style:transform="scale({1 - i * 0.05})">
+		<article
+			in:int|global={i}
+			out:out|global
+			style:transform="scale({1 - i * 0.05})"
+			role="status"
+			aria-atomic="true"
+		>
 			<span class="text">
 				<Icon icon={snack.icon} />
 				{snack.text}
 			</span>
 			<div>
-				{#each snack.actions || [] as act}
+				{#each snack.actions || [] as act, index (index)}
 					<Button small transparent icon={act.icon} onclick={act.onclick}>
 						{act.text}
 					</Button>
 				{/each}
 				{#if snack.dismissable !== false}
-					<IconButton icon="close" onclick={() => closeSnackbar()} />
+					<IconButton
+						icon="close"
+						aria-label="Dismiss notification"
+						onclick={() => closeSnackbar()}
+					/>
 				{/if}
 			</div>
 		</article>
@@ -50,7 +60,7 @@
 {/snippet}
 
 {#if snack.length}
-	<main>
+	<main aria-live="polite" aria-relevant="additions text" aria-atomic="false">
 		{#each snack.list.toReversed() as sn, i (sn.id)}
 			{@render snackbar(sn, snack.length - i - 1)}
 		{/each}

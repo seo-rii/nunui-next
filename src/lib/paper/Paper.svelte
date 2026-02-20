@@ -69,8 +69,67 @@
 	let hover = delayedToggle(false);
 	let hoverTarget = delayedToggle(false);
 	let show = $state(_show);
+	let triggerTarget = $state<HTMLElement | null>(null);
+	let panel = $state<HTMLElement | null>(null);
+	let targetHasFocusable = $state(false);
 	let iv = 0,
 		ig = false;
+
+	const focusableSelector = [
+		'button:not([disabled])',
+		'[href]',
+		'input:not([disabled])',
+		'select:not([disabled])',
+		'textarea:not([disabled])',
+		'[tabindex]:not([tabindex="-1"])'
+	].join(', ');
+
+	const getFocusable = (node: ParentNode | null): HTMLElement[] => {
+		if (!node) return [];
+		const focusable = [...node.querySelectorAll<HTMLElement>(focusableSelector)];
+		return focusable.filter((el) => {
+			if (el.hasAttribute('disabled')) return false;
+			if (el.getAttribute('aria-hidden') === 'true') return false;
+			return el.getClientRects().length > 0;
+		});
+	};
+
+	const handleToggle = (e?: MouseEvent | KeyboardEvent) => {
+		if ((e as MouseEvent & { __paperRemapForwarded?: boolean })?.__paperRemapForwarded) {
+			ig = true;
+			return;
+		}
+		onclick?.(e);
+		if (ig) return;
+		ig = true;
+		_show = !_show;
+	};
+
+	const handleKeydown = (e: KeyboardEvent) => {
+		if (e.key === 'Tab' && !e.shiftKey && _show) {
+			const active = document.activeElement as HTMLElement | null;
+			const current = e.currentTarget as HTMLElement | null;
+			const onTrigger = (!!active && !!triggerTarget?.contains(active)) || active === current;
+			if (onTrigger) {
+				const next = getFocusable(panel)[0];
+				if (next) {
+					e.preventDefault();
+					next.focus();
+					return;
+				}
+			}
+		}
+
+		if (targetHasFocusable) return;
+		if (e.key !== 'Enter' && e.key !== ' ') return;
+		e.preventDefault();
+		handleToggle(e);
+	};
+
+	$effect(() => {
+		if (!triggerTarget) return;
+		targetHasFocusable = !!triggerTarget.querySelector(focusableSelector);
+	});
 
 	$effect(() => {
 		if (by === 'hover' && !useMobile) _show = hover.v || hoverTarget.v;
@@ -96,56 +155,63 @@
 	});
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-<main
-	class:i={inlineBlock}
-	class:b={block}
-	onclick={(e) => {
-		if ((e as MouseEvent & { __paperRemapForwarded?: boolean }).__paperRemapForwarded) {
-			ig = true;
-			return;
-		}
-		onclick?.(e);
-		if (ig) return;
-		ig = true;
-		_show = !_show;
-	}}
-	use:hovering={hover}
->
-	<Render it={target} />
+{#snippet content()}
+	<div class="target" bind:this={triggerTarget}>
+		<Render it={target} />
+	</div>
 	{#if show}
 		{#if useMobile}
-			<PaperMobile bind:show={_show} onclick={() => (ig = true)} {remap} {...rest}>
+			<PaperMobile
+				bind:show={_show}
+				bind:panel={panel}
+				onclick={() => (ig = true)}
+				remap={remap}
+				{...rest}
+			>
 				<div class="m" class:dense use:hovering={hoverTarget}>
-					<Render {children} />
+					<Render children={children} />
 				</div>
 			</PaperMobile>
 		{:else}
 			<PaperDesktop
-				{remap}
+				bind:panel={panel}
+				remap={remap}
 				bind:show={_show}
 				onclick={() => (ig = true)}
-				{tl}
-				{tc}
-				{tr}
-				{ml}
-				{mr}
-				{bl}
-				{bc}
-				{br}
+				tl={tl}
+				tc={tc}
+				tr={tr}
+				ml={ml}
+				mr={mr}
+				bl={bl}
+				bc={bc}
+				br={br}
 				{...rest}
 			>
 				<div class="d" class:dense use:hovering={hoverTarget}>
-					<Render {children} />
+					<Render children={children} />
 				</div>
 			</PaperDesktop>
 		{/if}
 	{/if}
-</main>
+{/snippet}
+
+<div
+	class="trigger"
+	class:i={inlineBlock}
+	class:b={block}
+	role="button"
+	tabindex={targetHasFocusable ? -1 : 0}
+	aria-expanded={_show}
+	onclick={handleToggle}
+	onkeydown={handleKeydown}
+	use:hovering={hover}
+>
+	{@render content()}
+</div>
 
 <style>
-	main {
+	.trigger {
 		position: relative;
 
 		&.b {
@@ -155,6 +221,10 @@
 		&.i {
 			display: inline-block;
 		}
+	}
+
+	.target {
+		display: contents;
 	}
 
 	.d {

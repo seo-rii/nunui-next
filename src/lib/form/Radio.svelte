@@ -91,6 +91,11 @@
 		outline: none;
 		position: relative;
 
+		&:focus-visible {
+			outline: 2px solid color-mix(in srgb, var(--theme), transparent 40%);
+			outline-offset: 2px;
+		}
+
 		&:before {
 			content: '';
 			border: solid 2px color-mix(in srgb, var(--on-surface), var(--surface) 30%);

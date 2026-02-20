@@ -155,6 +155,7 @@
 		border-bottom: 1px solid var(--theme-light4);
 		border-radius: 4px 4px 0 0;
 		align-items: center;
+		transition: box-shadow 0.2s ease;
 
 		&.block {
 			display: flex;
@@ -163,6 +164,10 @@
 		&.plain {
 			border-bottom: none;
 			border-radius: 6px;
+		}
+
+		&:has(:is(input, textarea):focus-visible) {
+			box-shadow: 0 0 0 2px color-mix(in srgb, var(--theme), transparent 55%);
 		}
 	}
 
@@ -179,6 +184,11 @@
 		position: relative;
 		z-index: 1;
 		width: calc(100% - 2em);
+
+		&:focus-visible {
+			outline: 2px solid var(--theme);
+			outline-offset: 2px;
+		}
 	}
 
 	.background {
@@ -202,7 +212,6 @@
 			transform: scaleX(1);
 			transition: all 0.2s ease;
 		}
-
 	}
 
 	div {
@@ -220,7 +229,6 @@
 		z-index: 1;
 		opacity: 0.7;
 		color: var(--on-surface);
-
 	}
 
 	main.plain :is(input, textarea) {

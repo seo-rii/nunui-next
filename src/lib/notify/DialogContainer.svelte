@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { tick } from 'svelte';
 	import { quartOut } from 'svelte/easing';
+	import { on } from 'svelte/events';
 	import Icon from '$lib/etc/Icon.svelte';
 	import Button from '$lib/button/Button.svelte';
 	import { closeDialog, type IDialog, dialog } from './dialog.svelte.js';
@@ -10,6 +12,18 @@
 
 	let actionLoading = $state<Record<string, boolean>>({});
 	let activeDialogId = $derived(dialog.active?.id ?? -1);
+	let activeTitleId = $derived(`nunui-dialog-title-${activeDialogId}`);
+	let activeDescriptionId = $derived(`nunui-dialog-desc-${activeDialogId}`);
+	let dialogElement = $state<HTMLElement | null>(null);
+
+	const focusableSelector = [
+		'button:not([disabled])',
+		'[href]',
+		'input:not([disabled])',
+		'select:not([disabled])',
+		'textarea:not([disabled])',
+		'[tabindex]:not([tabindex="-1"])'
+	].join(', ');
 
 	const isPromiseLike = (value: unknown): value is Promise<unknown> =>
 		typeof value === 'object' &&
@@ -29,6 +43,65 @@
 			actionLoading[key] = false;
 		});
 	};
+
+	const getFocusableElements = () => {
+		if (!dialogElement) return [];
+		return [...dialogElement.querySelectorAll<HTMLElement>(focusableSelector)].filter(
+			(el) => el.tabIndex >= 0 && el.getAttribute('aria-hidden') !== 'true'
+		);
+	};
+
+	const focusDialog = () => {
+		const [first] = getFocusableElements();
+		(first || dialogElement)?.focus();
+	};
+
+	$effect(() => {
+		const activeId = dialog.active?.id;
+		if (activeId === undefined) return;
+
+		const previousFocus =
+			document.activeElement instanceof HTMLElement ? document.activeElement : null;
+		tick().then(() => focusDialog());
+		const offKeydown = on(window, 'keydown', (e) => {
+			if (!dialogElement || !dialog.length) return;
+			if (e.key === 'Escape') {
+				if (dialog.active?.dismissable !== false) {
+					e.preventDefault();
+					closeDialog();
+				}
+				return;
+			}
+			if (e.key !== 'Tab') return;
+
+			const focusables = getFocusableElements();
+			if (!focusables.length) {
+				e.preventDefault();
+				dialogElement.focus();
+				return;
+			}
+
+			const first = focusables[0];
+			const last = focusables[focusables.length - 1];
+			const active = document.activeElement as HTMLElement | null;
+			if (e.shiftKey) {
+				if (active === first || !dialogElement.contains(active)) {
+					e.preventDefault();
+					last.focus();
+				}
+				return;
+			}
+			if (active === last) {
+				e.preventDefault();
+				first.focus();
+			}
+		});
+
+		return () => {
+			offKeydown();
+			previousFocus?.focus();
+		};
+	});
 
 	function int(node: Element) {
 		return {
@@ -55,9 +128,20 @@
 
 {#snippet dialogUI(dialog: IDialog)}
 	{#key dialog.id}
-		<article in:int|global out:out|global style:--mw={dialog.maxWidth}>
-			<span class="title"><Icon icon={dialog.icon} />{dialog.title}</span>
-			<span class="text">
+		<div
+			class="dialog"
+			in:int|global
+			out:out|global
+			style:--mw={dialog.maxWidth}
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby={activeTitleId}
+			aria-describedby={activeDescriptionId}
+			tabindex="-1"
+			bind:this={dialogElement}
+		>
+			<h2 class="title" id={activeTitleId}><Icon icon={dialog.icon} />{dialog.title}</h2>
+			<div class="text" id={activeDescriptionId}>
 				{dialog.text}
 				{#if dialog.snip}
 					<Render it={dialog.snip} />
@@ -65,7 +149,7 @@
 					{@const Comp = dialog.comp}
 					<Comp />
 				{/if}
-			</span>
+			</div>
 			{#if dialog.actions?.length}
 				<div class="act">
 					{#each dialog.actions || [] as act, index (index)}
@@ -81,7 +165,7 @@
 					{/each}
 				</div>
 			{/if}
-		</article>
+		</div>
 	{/key}
 {/snippet}
 
@@ -110,7 +194,7 @@
 		z-index: 1001;
 	}
 
-	article {
+	.dialog {
 		padding: 18px;
 		background: var(--primary-light1);
 		border-radius: 12px;
@@ -131,7 +215,7 @@
 		display: flex;
 		align-items: center;
 		gap: 4px;
-		margin-bottom: 8px;
+		margin: 0 0 8px;
 	}
 
 	.text {

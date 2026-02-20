@@ -6,6 +6,7 @@
 	let {
 		children,
 		show = $bindable(false),
+		panel = $bindable<HTMLElement | null>(null),
 		remap,
 
 		tl,
@@ -73,10 +74,9 @@
 	};
 
 	let root = $state<HTMLDivElement | null>(null);
-	let target = $state<HTMLElement | null>(null);
 	$effect(() => {
-		if (!target || !root || !remap) return;
-		const from = target;
+		if (!panel || !root || !remap) return;
+		const from = panel;
 		const to = root;
 		// Rebuild mouse/pointer bubbling across remapped DOM boundaries.
 		const handlers = remapMouseEventTypes.map((type) =>
@@ -92,9 +92,9 @@
 	});
 
 	$effect(() => {
-		if (!target || !root) return;
+		if (!panel || !root) return;
 		if (remap) {
-			document.body.appendChild(target);
+			document.body.appendChild(panel);
 		}
 		let [_, __] = [scrollX, scrollY];
 		const {
@@ -188,7 +188,7 @@
 		}, 0);
 
 		return () => {
-			if (remap) (root as HTMLDivElement).appendChild(target as any);
+			if (remap) (root as HTMLDivElement).appendChild(panel as any);
 		};
 	});
 </script>
@@ -213,7 +213,7 @@
 		style:right
 		style:bottom
 		class:remap
-		bind:this={target}
+		bind:this={panel}
 	>
 		{#if render}
 			<Render {children} />

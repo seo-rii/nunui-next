@@ -6,6 +6,7 @@
 	let {
 		children,
 		show = $bindable(false),
+		panel = $bindable<HTMLElement | null>(null),
 		remap,
 
 		...rest
@@ -119,12 +120,11 @@
 
 	let root = $state<HTMLDivElement | null>(null);
 	let scrim = $state<HTMLDivElement | null>(null);
-	let target = $state<HTMLElement | null>(null);
 
 	$effect(() => {
 		if (!root || !remap) return;
 		const to = root;
-		const fromList = [target, scrim].filter((it): it is HTMLElement => !!it);
+		const fromList = [panel, scrim].filter((it): it is HTMLElement => !!it);
 		if (!fromList.length) return;
 		// Rebuild mouse/pointer bubbling across remapped DOM boundaries.
 		const handlers = fromList.flatMap((from) =>
@@ -132,7 +132,7 @@
 				on(from, type, (event) => {
 					event.stopPropagation();
 					const forwarded = cloneEvent(event);
-					if (from === target) {
+					if (from === panel) {
 						(forwarded as Event & { __paperRemapForwarded?: boolean }).__paperRemapForwarded = true;
 					}
 					const canceled = !to.dispatchEvent(forwarded);
@@ -144,16 +144,16 @@
 	});
 
 	$effect(() => {
-		if (!target || !scrim || !root) return;
+		if (!panel || !scrim || !root) return;
 		if (remap) {
 			document.body.appendChild(scrim);
-			document.body.appendChild(target);
+			document.body.appendChild(panel);
 		}
 
 		return () => {
 			if (remap) {
 				(root as HTMLDivElement).appendChild(scrim as any);
-				(root as HTMLDivElement).appendChild(target as any);
+				(root as HTMLDivElement).appendChild(panel as any);
 			}
 		};
 	});
@@ -174,7 +174,7 @@
 		style:--delta="{delta}px"
 		style:--dx="{vx}px"
 		class:tr
-		bind:this={target}
+		bind:this={panel}
 	>
 		<div class="line">
 			<div class="handle"></div>
