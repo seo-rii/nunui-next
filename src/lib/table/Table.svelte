@@ -83,7 +83,6 @@
 	}
 
 	table {
-		//border-collapse: collapse;
 		border-spacing: 0;
 		margin-bottom: 20px;
 		max-width: 100vw;
