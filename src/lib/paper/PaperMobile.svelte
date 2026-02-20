@@ -18,6 +18,49 @@
 		dx = $state(0);
 	let tr = $derived(delta || dx);
 
+	const remapMouseEventTypes = [
+		'click',
+		'auxclick',
+		'dblclick',
+		'contextmenu',
+		'mousedown',
+		'mouseup',
+		'mousemove',
+		'mouseover',
+		'mouseout',
+		'mouseenter',
+		'mouseleave',
+		'wheel',
+		'touchstart',
+		'touchmove',
+		'touchend',
+		'touchcancel',
+		'pointerdown',
+		'pointerup',
+		'pointermove',
+		'pointerover',
+		'pointerout',
+		'pointerenter',
+		'pointerleave',
+		'pointercancel'
+	] as const;
+
+	const cloneEvent = (event: Event): Event => {
+		try {
+			const EventConstructor = event.constructor as new (
+				type: string,
+				eventInitDict?: EventInit
+			) => Event;
+			return new EventConstructor(event.type, event as any);
+		} catch {
+			return new Event(event.type, {
+				bubbles: event.bubbles,
+				cancelable: event.cancelable,
+				composed: event.composed
+			});
+		}
+	};
+
 	$effect(() => {
 		if (!container) return;
 		let from = 0,
@@ -77,6 +120,28 @@
 	let root = $state<HTMLDivElement | null>(null);
 	let scrim = $state<HTMLDivElement | null>(null);
 	let target = $state<HTMLElement | null>(null);
+
+	$effect(() => {
+		if (!root || !remap) return;
+		const to = root;
+		const fromList = [target, scrim].filter((it): it is HTMLElement => !!it);
+		if (!fromList.length) return;
+		// Rebuild mouse/pointer bubbling across remapped DOM boundaries.
+		const handlers = fromList.flatMap((from) =>
+			remapMouseEventTypes.map((type) =>
+				on(from, type, (event) => {
+					event.stopPropagation();
+					const forwarded = cloneEvent(event);
+					if (from === target) {
+						(forwarded as Event & { __paperRemapForwarded?: boolean }).__paperRemapForwarded = true;
+					}
+					const canceled = !to.dispatchEvent(forwarded);
+					if (canceled && event.cancelable) event.preventDefault();
+				})
+			)
+		);
+		return () => handlers.forEach((off) => off());
+	});
 
 	$effect(() => {
 		if (!target || !scrim || !root) return;

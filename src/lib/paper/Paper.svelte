@@ -102,6 +102,10 @@
 	class:i={inlineBlock}
 	class:b={block}
 	onclick={(e) => {
+		if ((e as MouseEvent & { __paperRemapForwarded?: boolean }).__paperRemapForwarded) {
+			ig = true;
+			return;
+		}
 		onclick?.(e);
 		if (ig) return;
 		ig = true;
