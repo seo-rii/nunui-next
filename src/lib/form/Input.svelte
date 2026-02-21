@@ -82,8 +82,6 @@
 				}
 			: null
 	);
-
-	$effect(() => {});
 </script>
 
 {#snippet additional(target: any, trailing = false)}

@@ -53,7 +53,7 @@ export class SnackbarState {
 			this.shiftActive();
 			this.timeout = undefined;
 			if (this.list.length) this.next();
-		}, this.active.duration || 5000);
+		}, this.active?.duration || 5000);
 	}
 }
 

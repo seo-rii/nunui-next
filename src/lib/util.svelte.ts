@@ -1,9 +1,8 @@
 import type { Snippet } from 'svelte';
-import type { ActionReturn } from 'svelte/action';
 import { quadInOut } from 'svelte/easing';
 import { on } from 'svelte/events';
 
-export type Renderable = string | number | Snippet | boolean | number | undefined;
+export type Renderable = string | number | Snippet | boolean | undefined;
 
 export function tween(value: number, { duration = 500, easing = quadInOut } = {}) {
 	let current = $state(value);
@@ -32,7 +31,10 @@ export function tween(value: number, { duration = 500, easing = quadInOut } = {}
 				toValue = v;
 				fromTs = performance.now();
 			}
-			if (typeof requestAnimationFrame !== 'undefined') frame = requestAnimationFrame(update);
+			if (typeof requestAnimationFrame !== 'undefined') {
+				if (frame) cancelAnimationFrame(frame);
+				frame = requestAnimationFrame(update);
+			}
 		},
 		set(v: number) {
 			fromValue = toValue = current = v;
@@ -55,7 +57,7 @@ export function hovering(node: HTMLElement, hover: { v: boolean; r?: boolean }) 
 			hover.v = false;
 		})
 	];
-	return (() => handlers.forEach((off) => off())) as ActionReturn;
+	return { destroy: () => handlers.forEach((off) => off()) };
 }
 
 export function delayedToggle(iv = false, setDelay = 200, clearDelay = 200) {

@@ -14,7 +14,6 @@
 
 	const config = getContext<{ vibrate: boolean }>('config');
 
-	let container = $state<HTMLElement | null>(null);
 	let delta = $state(0),
 		dx = $state(0);
 	let tr = $derived(delta || dx);
@@ -63,32 +62,32 @@
 	};
 
 	$effect(() => {
-		if (!container) return;
+		if (!panel) return;
 		let from = 0,
 			fx = 0,
 			run = false,
 			vib = false;
 		const handlers = [
-			on(container, 'touchstart', (e) => {
-				if (!container) return;
+			on(panel, 'touchstart', (e) => {
+				if (!panel) return;
 				e.stopPropagation();
 				const { clientY, clientX } = e.touches[0];
-				const { top, left } = container.getBoundingClientRect();
+				const { top, left } = panel.getBoundingClientRect();
 				from = clientY - top;
 				fx = clientX - left;
 				run = true;
 				vib = false;
 			}),
-			on(container, 'touchmove', (e) => {
-				if (!container) return;
+			on(panel, 'touchmove', (e) => {
+				if (!panel) return;
 				e.stopPropagation();
 				if (!run) return;
-				if (container.scrollTop > 0) {
+				if (panel.scrollTop > 0) {
 					run = false;
 					return;
 				}
 				const { clientY, clientX } = e.touches[0];
-				const { top, left } = container.getBoundingClientRect();
+				const { top, left } = panel.getBoundingClientRect();
 				if (delta + clientY - top - from > 0) e.preventDefault();
 				delta = Math.max(0, delta + clientY - top - from);
 				if (delta > 10 && !vib) {
@@ -97,7 +96,7 @@
 				}
 				dx = dx + clientX - left - fx;
 			}),
-			on(container, 'touchend', (e) => {
+			on(panel, 'touchend', (e) => {
 				e.stopPropagation();
 				run = false;
 				if (delta > 100) show = false;
@@ -170,7 +169,6 @@
 		{...rest}
 		class:remap
 		class:hide={!show}
-		bind:this={container}
 		style:--delta="{delta}px"
 		style:--dx="{vx}px"
 		class:tr
