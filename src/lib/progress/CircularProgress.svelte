@@ -44,9 +44,17 @@
 	});
 
 	let progress = $derived(stop ? 1 : start ? 0 : _progress);
+	let determinateProgress = $derived(Math.max(0, Math.min(1, progress || 0)));
+	let ariaValueNow = $derived(Math.round(determinateProgress * 100));
 </script>
 
 <svg
+	{...rest}
+	role="progressbar"
+	aria-valuemin={0}
+	aria-valuemax={100}
+	aria-valuenow={indeterminate ? undefined : ariaValueNow}
+	aria-busy={indeterminate ? 'true' : undefined}
 	style:--size={typeof size === 'number' ? `${size}px` : size}
 	width="35px"
 	height="35px"
@@ -54,7 +62,6 @@
 	xmlns="http://www.w3.org/2000/svg"
 	class:_p={primary}
 	class:_s={secondary}
-	{...rest}
 >
 	<circle
 		class="rail"
@@ -92,7 +99,7 @@
 					cx="35"
 					cy="35"
 					r="30"
-					style:--progress={progress * 188.49}
+					style:--progress={determinateProgress * 188.49}
 				></circle>
 			</g>
 		</g>

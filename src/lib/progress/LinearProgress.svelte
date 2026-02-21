@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { HTMLAttributes } from 'svelte/elements';
 
-	interface LinearProgressProps extends HTMLAttributes<HTMLDivElement> {
+	interface LinearProgressProps extends HTMLAttributes<HTMLElement> {
 		progress?: number;
 		indeterminate?: boolean;
 		secondary?: boolean;
@@ -17,7 +17,8 @@
 		indeterminate: _indeterminate = false,
 		secondary = false,
 		primary = !secondary,
-		color: background = ''
+		color: background = '',
+		...rest
 	}: LinearProgressProps = $props();
 
 	let start = $state(false),
@@ -46,9 +47,21 @@
 	});
 
 	let progress = $derived(stop ? 1 : start ? 0 : _progress);
+	let determinateProgress = $derived(Math.max(0, Math.min(1, progress || 0)));
+	let ariaValueNow = $derived(Math.round(determinateProgress * 100));
 </script>
 
-<main {style} class:_p={primary} class:_s={secondary}>
+<main
+	{...rest}
+	role="progressbar"
+	aria-valuemin={0}
+	aria-valuemax={100}
+	aria-valuenow={indeterminate ? undefined : ariaValueNow}
+	aria-busy={indeterminate ? 'true' : undefined}
+	{style}
+	class:_p={primary}
+	class:_s={secondary}
+>
 	<div class="line"></div>
 	{#if indeterminate || lastIndeterminate}
 		<div class="indicator ind-1" class:exit={start} style:background></div>
@@ -58,7 +71,7 @@
 		<div
 			class="indicator"
 			style:background
-			style:width="{progress * 100 || 0}%"
+			style:width={`${determinateProgress * 100}%`}
 			class:exit={stop}
 		></div>
 	{/if}
