@@ -38,7 +38,7 @@
 			aria-atomic="true"
 		>
 			<span class="text">
-				<Icon icon={snack.icon} />
+				{#if snack.icon}<Icon icon={snack.icon} aria-hidden="true" />{/if}
 				{snack.text}
 			</span>
 			<div>

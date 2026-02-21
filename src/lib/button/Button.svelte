@@ -73,7 +73,7 @@
 		{...rest}
 		disabled={disabled || loading}
 		class={buttonClass}
-		aria-label={tooltip as string}
+		aria-label={typeof tooltip === 'string' ? tooltip : undefined}
 	>
 		{#if icon}
 			<Icon {icon} style={children ? 'margin-right: 4px' : ''} />

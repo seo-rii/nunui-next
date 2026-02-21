@@ -58,8 +58,16 @@
 </main>
 
 <style>
-	* {
+	main {
 		cursor: pointer;
+
+		&:has(input:disabled) {
+			cursor: not-allowed;
+		}
+	}
+
+	main :global(*) {
+		cursor: inherit;
 	}
 
 	main {
