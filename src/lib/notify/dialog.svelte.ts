@@ -26,13 +26,23 @@ export class DialogState {
 	length = $derived(this.list.length);
 	newId = $state(0);
 
+	invokeOnclose(dialog?: IDialog) {
+		if (!dialog?.onclose) return;
+		try {
+			dialog.onclose();
+		} catch (error) {
+			console.error('Dialog onclose callback failed', error);
+		}
+	}
+
 	add(dialog: IDialog) {
 		if (dialog.front) this.list.unshift({ ...dialog, id: this.newId++ });
 		else this.list.push({ ...dialog, id: this.newId++ });
 	}
 
 	close() {
-		this.list.shift();
+		const closed = this.list.shift();
+		this.invokeOnclose(closed);
 	}
 }
 

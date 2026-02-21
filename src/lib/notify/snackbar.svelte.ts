@@ -20,6 +20,20 @@ export class SnackbarState {
 	newId = $state(0);
 	timeout?: number;
 
+	invokeOnclose(snackbar?: ISnackbar) {
+		if (!snackbar?.onclose) return;
+		try {
+			snackbar.onclose();
+		} catch (error) {
+			console.error('Snackbar onclose callback failed', error);
+		}
+	}
+
+	shiftActive() {
+		const closed = this.list.shift();
+		this.invokeOnclose(closed);
+	}
+
 	add(snackbar: ISnackbar) {
 		this.list.push({ ...snackbar, id: this.newId++ });
 		if (!this.timeout) this.next();
@@ -30,13 +44,13 @@ export class SnackbarState {
 			clearTimeout(this.timeout);
 			this.timeout = undefined;
 		}
-		this.list.shift();
+		this.shiftActive();
 		if (this.list.length) this.next();
 	}
 
 	next() {
 		this.timeout = setTimeout(() => {
-			this.list.shift();
+			this.shiftActive();
 			this.timeout = undefined;
 			if (this.list.length) this.next();
 		}, this.active.duration || 5000);
