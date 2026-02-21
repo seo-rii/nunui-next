@@ -1,8 +1,20 @@
 import type { Snippet } from 'svelte';
+import { hydratable } from 'svelte';
 import { quadInOut } from 'svelte/easing';
 import { on } from 'svelte/events';
 
 export type Renderable = string | number | Snippet | boolean | undefined;
+
+let idCounter = 0;
+
+/**
+ * Generate a unique, SSR-stable ID for form elements.
+ * Uses `hydratable` so the value serialized during SSR is reused during hydration.
+ */
+export function uniqueId(prefix: string): string {
+	const n = idCounter++;
+	return hydratable(`nunui-${prefix}-${n}`, () => `nunui-${prefix}-${n}`);
+}
 
 export function tween(value: number, { duration = 500, easing = quadInOut } = {}) {
 	let current = $state(value);

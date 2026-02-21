@@ -1,15 +1,8 @@
-<script module>
-	let counter = 0;
-
-	function getCounter() {
-		return `nunui-input-${counter++}`;
-	}
-</script>
-
 <script lang="ts">
 	import type { HTMLInputAttributes, HTMLTextareaAttributes } from 'svelte/elements';
 	import { Icon, Render } from '$lib/index.js';
 	import IconButton from '$lib/button/IconButton.svelte';
+	import { uniqueId } from '$lib/util.svelte.js';
 	import type { Renderable } from '$lib/util.svelte.js';
 	import autosize from 'autosize';
 
@@ -68,7 +61,7 @@
 		...rest
 	}: InputProps = $props();
 
-	let id = $derived(_id || getCounter());
+	let id = $derived(_id || uniqueId('input'));
 	let onkeyup = $derived(
 		_onkeyup || onsubmit || type === 'number'
 			? (e: KeyboardEvent) => {

@@ -1,14 +1,7 @@
-<script module>
-	let counter = 0;
-
-	function getCounter() {
-		return `nunui-checkbox-${counter++}`;
-	}
-</script>
-
 <script lang="ts">
 	import type { HTMLInputAttributes } from 'svelte/elements';
 	import { Render, Ripple } from '$lib/index.js';
+	import { uniqueId } from '$lib/util.svelte.js';
 	import type { Renderable } from '$lib/util.svelte.js';
 
 	interface CheckboxProps extends Omit<HTMLInputAttributes, 'checked'> {
@@ -32,7 +25,7 @@
 		...rest
 	}: CheckboxProps = $props();
 
-	let id = $derived(_id || getCounter());
+	let id = $derived(_id || uniqueId('checkbox'));
 	let target = $state<HTMLInputElement | null>(null);
 	let container = $state<HTMLElement | null>(null);
 </script>
