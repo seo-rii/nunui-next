@@ -40,10 +40,10 @@
 	let iv = 0,
 		run = 0;
 
-	let container = $derived(extra || (adapter as any as HTMLElement)?.parentElement);
+	let container = $derived(extra || (adapter as HTMLElement | null)?.parentElement);
 
 	$effect(() => {
-		active.v = _active as any;
+		active.v = !!_active;
 	});
 
 	$effect(() => {

@@ -7,7 +7,7 @@
 		it?: Renderable;
 	}
 
-	let { children = null as any, it = null as any }: RenderType = $props();
+	let { children = undefined, it = undefined }: RenderType = $props();
 
 	let target = $derived<Renderable>(children || it);
 </script>

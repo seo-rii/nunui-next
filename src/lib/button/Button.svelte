@@ -5,10 +5,10 @@
 	import Render from '$lib/etc/Render.svelte';
 	import Paper from '$lib/paper/Paper.svelte';
 	import CircularProgress from '$lib/progress/CircularProgress.svelte';
-	import { classes } from '$lib/util.svelte.js';
+	import { classes, type Renderable } from '$lib/util.svelte.js';
 	import { fade } from 'svelte/transition';
 
-	interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
+	interface ButtonProps extends Omit<HTMLAttributes<HTMLButtonElement>, 'children'> {
 		primary?: boolean;
 		secondary?: boolean;
 		icon?: string;
@@ -19,10 +19,10 @@
 		round?: boolean;
 		small?: boolean;
 		large?: boolean;
-		tooltip?: string | Record<string, any>;
+		tooltip?: string | Record<string, unknown>;
 		active?: boolean;
 		full?: boolean;
-		children?: any;
+		children?: Renderable;
 		loading?: boolean;
 
 		[k: `light-${number}` | `dark-${number}`]: boolean;
@@ -50,7 +50,7 @@
 
 	const buttonClass = $derived(
 		classes(
-			className as any,
+			className as string,
 			{
 				_p: primary,
 				_s: secondary,
@@ -96,7 +96,7 @@
 	{#if typeof tooltip === 'object' && tooltip.children}
 		<Paper hover mobile={false} {...tooltip} target={button} />
 	{:else}
-		<Paper tl hover mobile={false} target={button} children={tooltip} />
+		<Paper tl hover mobile={false} target={button} children={tooltip as Renderable} />
 	{/if}
 {:else}
 	{@render button()}

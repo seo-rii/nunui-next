@@ -9,14 +9,15 @@
 <script lang="ts">
 	import type { HTMLInputAttributes } from 'svelte/elements';
 	import { Render, Ripple } from '$lib/index.js';
+	import type { Renderable } from '$lib/util.svelte.js';
 
 	interface CheckboxProps extends Omit<HTMLInputAttributes, 'checked'> {
 		name?: string;
 		secondary?: boolean;
 		primary?: boolean;
-		label?: string | any;
+		label?: Renderable;
 		id?: string;
-		value?: any;
+		value?: string | number | boolean | undefined;
 		checked?: boolean;
 	}
 
@@ -42,7 +43,8 @@
 	class:_s={secondary}
 	role="presentation"
 	onclick={(e) => {
-		if ((e.target as any)?.tagName !== 'INPUT' && (e.target as any)?.tagName !== 'LABEL') return;
+		const tag = (e.target as HTMLElement)?.tagName;
+		if (tag !== 'INPUT' && tag !== 'LABEL') return;
 		//target?.click();
 	}}
 >

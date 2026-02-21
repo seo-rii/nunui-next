@@ -3,10 +3,11 @@
 	import { Render } from '$lib/index.js';
 	import SnackbarContainer from '$lib/notify/SnackbarContainer.svelte';
 	import DialogContainer from '$lib/notify/DialogContainer.svelte';
+	import type { Renderable } from '$lib/util.svelte.js';
 	import './base.css';
 
 	interface ThemeProviderProps {
-		children?: any;
+		children?: Renderable;
 		primary?: string;
 		secondary?: string;
 		surface?: string;

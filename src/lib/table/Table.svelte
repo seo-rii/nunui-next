@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { Render } from '$lib/index.js';
 	import type { HTMLAttributes } from 'svelte/elements';
+	import type { Renderable } from '$lib/util.svelte.js';
 
-	interface TableProps extends HTMLAttributes<HTMLTableElement> {
+	interface TableProps extends Omit<HTMLAttributes<HTMLTableElement>, 'children'> {
 		style?: string;
-		children?: any;
-		header?: any;
+		children?: Renderable;
+		header?: Renderable;
 		stickyTop?: boolean | number | string | null;
 		stickyLeft?: boolean | number | string | null;
 	}

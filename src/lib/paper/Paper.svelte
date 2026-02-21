@@ -6,8 +6,8 @@
 	import PaperMobile from '$lib/paper/PaperMobile.svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
 
-	interface PaperProps extends HTMLAttributes<HTMLDivElement> {
-		children?: any;
+	interface PaperProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
+		children?: Renderable;
 		hover?: boolean;
 		mobile?: boolean;
 		target?: Renderable;
@@ -35,7 +35,7 @@
 		by?: 'hover' | 'click';
 		remap?: boolean;
 
-		onclick?: (e?: any) => void;
+		onclick?: (e?: MouseEvent | KeyboardEvent) => void;
 	}
 
 	const config = getContext<{ mobile: boolean }>('config');

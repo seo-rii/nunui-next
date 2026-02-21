@@ -10,6 +10,7 @@
 	import type { HTMLInputAttributes, HTMLTextareaAttributes } from 'svelte/elements';
 	import { Icon, Render } from '$lib/index.js';
 	import IconButton from '$lib/button/IconButton.svelte';
+	import type { Renderable } from '$lib/util.svelte.js';
 	import autosize from 'autosize';
 
 	const action = (node: HTMLElement) => {
@@ -84,15 +85,15 @@
 	);
 </script>
 
-{#snippet additional(target: any, trailing = false)}
+{#snippet additional(target: string | { icon: string; [k: string]: unknown } | Renderable, trailing = false)}
 	{#if target}
 		<span class:trailing>
 			{#if typeof target === 'string'}
 				<Icon icon={target} class="leading" />
-			{:else if target?.icon}
+			{:else if typeof target === 'object' && target !== null && 'icon' in target}
 				<IconButton {...target} />
 			{:else}
-				<Render it={target} />
+				<Render it={target as Renderable} />
 			{/if}
 		</span>
 	{/if}

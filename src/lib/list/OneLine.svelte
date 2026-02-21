@@ -4,6 +4,9 @@
 	import type { Renderable } from '$lib/util.svelte.js';
 	import Ripple from '../etc/Ripple.svelte';
 
+	type SvelteMouseEvent = MouseEvent & { currentTarget: EventTarget & HTMLElement };
+	type SvelteKeyboardEvent = KeyboardEvent & { currentTarget: EventTarget & HTMLElement };
+
 	interface OneLineProps extends Omit<HTMLAttributes<HTMLElement>, 'title'> {
 		title?: Renderable;
 		icon?: string;
@@ -13,11 +16,11 @@
 	let { title, icon, active, onclick, onkeydown, ...rest }: OneLineProps = $props();
 
 	const handleKeydown = (e: KeyboardEvent) => {
-		onkeydown?.(e as any);
+		onkeydown?.(e as SvelteKeyboardEvent);
 		if (e.defaultPrevented || !onclick) return;
 		if (e.key === 'Enter' || e.key === ' ') {
 			e.preventDefault();
-			onclick(e as any);
+			onclick(e as unknown as SvelteMouseEvent);
 		}
 	};
 </script>
