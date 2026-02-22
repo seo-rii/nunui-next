@@ -146,7 +146,6 @@
 		border-bottom: 1px solid var(--theme-light4);
 		border-radius: 4px 4px 0 0;
 		align-items: center;
-		transition: box-shadow 0.2s ease;
 
 		&.block {
 			display: flex;
@@ -157,9 +156,6 @@
 			border-radius: 6px;
 		}
 
-		&:has(:is(input, textarea):focus-visible) {
-			box-shadow: 0 0 0 2px color-mix(in srgb, var(--theme), transparent 55%);
-		}
 	}
 
 	input,
@@ -175,11 +171,6 @@
 		position: relative;
 		z-index: 1;
 		width: calc(100% - 2em);
-
-		&:focus-visible {
-			outline: 2px solid var(--theme);
-			outline-offset: 2px;
-		}
 	}
 
 	.background {
