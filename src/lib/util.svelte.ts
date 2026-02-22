@@ -1,5 +1,4 @@
 import type { Snippet } from 'svelte';
-import { hydratable } from 'svelte';
 import { quadInOut } from 'svelte/easing';
 import { on } from 'svelte/events';
 
@@ -13,7 +12,7 @@ let idCounter = 0;
  */
 export function uniqueId(prefix: string): string {
 	const n = idCounter++;
-	return hydratable(`nunui-${prefix}-${n}`, () => `nunui-${prefix}-${n}`);
+	return `nunui-${prefix}-${n}`;
 }
 
 export function tween(value: number, { duration = 500, easing = quadInOut } = {}) {
