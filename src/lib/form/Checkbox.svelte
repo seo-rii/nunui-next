@@ -36,14 +36,29 @@
 	class:_s={secondary}
 	role="presentation"
 	onclick={(e) => {
-		const tag = (e.target as HTMLElement)?.tagName;
-		if (tag !== 'INPUT' && tag !== 'LABEL') return;
-		//target?.click();
+		const el = e.target as HTMLElement | null;
+		if (!el) return;
+		if (el.closest('input, label')) return;
+		target?.click();
 	}}
 >
 	<div>
 		<Ripple extra={container} center />
-		<input {id} type="checkbox" {name} {value} bind:this={target} bind:checked {...rest} />
+		<input
+			{id}
+			type="checkbox"
+			{name}
+			{value}
+			bind:this={target}
+			bind:checked
+			onkeydown={(e) => {
+				if (e.key !== 'Enter') return;
+				if (e.repeat) return;
+				e.preventDefault();
+				(e.currentTarget as HTMLInputElement).click();
+			}}
+			{...rest}
+		/>
 		<svg class="icon" viewBox="0 0 18 18" aria-hidden="true">
 			<rect class="short" height="5.6px" width="2px"></rect>
 			<rect class="long" width="10.6px" height="2px"></rect>

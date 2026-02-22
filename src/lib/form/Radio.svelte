@@ -22,10 +22,14 @@
 		id: _id,
 		value,
 		selected = $bindable(null),
+		tabindex: _tabindex,
 		...rest
 	}: RadioProps = $props();
 
 	let id = $derived(_id || uniqueId('radio'));
+	let checked = $derived(selected === value);
+	let tabIndex = $derived(_tabindex ?? 0);
+	let disabled = $derived(!!rest.disabled);
 	let target = $state<HTMLInputElement | null>(null);
 	let container = $state<HTMLElement | null>(null);
 </script>
@@ -36,14 +40,38 @@
 	class:_s={secondary}
 	role="presentation"
 	onclick={(e) => {
-		const tag = (e.target as HTMLElement)?.tagName;
-		if (tag !== 'INPUT' && tag !== 'LABEL') return;
-		//target?.click();
+		const el = e.target as HTMLElement | null;
+		if (!el) return;
+		if (el.closest('input, label')) return;
+		target?.click();
 	}}
 >
-	<div>
+	<div
+		class="control-wrap"
+		role="radio"
+		aria-checked={checked}
+		aria-disabled={disabled}
+		tabindex={disabled ? -1 : tabIndex}
+		onkeydown={(e) => {
+			if (disabled) return;
+			if (e.key !== 'Enter' && e.key !== ' ') return;
+			if (e.repeat) return;
+			e.preventDefault();
+			target?.click();
+		}}
+	>
 		<Ripple extra={container} center />
-		<input {id} type="radio" {name} {value} bind:this={target} bind:group={selected} {...rest} />
+		<input
+			{id}
+			class="control"
+			type="radio"
+			{name}
+			{value}
+			tabindex="-1"
+			bind:this={target}
+			bind:group={selected}
+			{...rest}
+		/>
 	</div>
 	{#if label}
 		<label for={id}>
@@ -56,7 +84,7 @@
 	main {
 		cursor: pointer;
 
-		&:has(input:disabled) {
+		&:has(input.control:disabled) {
 			cursor: not-allowed;
 		}
 	}
@@ -70,20 +98,25 @@
 		--on-theme: var(--theme);
 	}
 
-	div {
+	.control-wrap {
 		display: inline-block;
 		border-radius: 100px;
 		width: 1.75em;
 		height: 1.75em;
 		position: relative;
 		vertical-align: middle;
+
+		&:focus-visible input.control {
+			outline: 2px solid color-mix(in srgb, var(--theme), transparent 40%);
+			outline-offset: 2px;
+		}
 	}
 
 	label {
 		vertical-align: middle;
 	}
 
-	input {
+	input.control {
 		-webkit-appearance: none;
 		appearance: none;
 		margin: 6px;
