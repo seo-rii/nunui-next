@@ -188,13 +188,13 @@
 		left: 0;
 		right: 0;
 		background: rgba(0, 0, 0, 0.5);
-		display: flex;
-		justify-content: center;
-		align-items: center;
+		display: grid;
+		place-items: center;
 		z-index: 1001;
 	}
 
 	.dialog {
+		grid-area: 1 / 1;
 		padding: 18px;
 		background: var(--primary-light1);
 		border-radius: 12px;
