@@ -38,7 +38,7 @@
 	let adapter: HTMLElement | null = null,
 		startTs = 0;
 	let iv = 0,
-		run = 0;
+		pointerId = -1;
 
 	let container = $derived(extra || (adapter as HTMLElement | null)?.parentElement);
 
@@ -70,8 +70,6 @@
 	};
 
 	const rippleShowEvent = (targetX: number, targetY: number) => {
-		if (run) return (run = 1);
-		run = 1;
 		if (iv) clearTimeout(iv);
 		if (config?.vibrate && typeof navigator.vibrate === 'function') navigator.vibrate(5);
 		show = render.r = false;
@@ -81,14 +79,9 @@
 		show = render.r = true;
 	};
 
-	const showRippleMouse = ({ pageX, pageY }: MouseEvent) => {
-		clicked = true;
-		rippleShowEvent(pageX, pageY);
-	};
 	const hideRipple = () => {
 		clicked = false;
 		if (iv) clearTimeout(iv);
-		if (run) run--;
 		iv = setTimeout(() => (show = false), Math.max(0, duration - (Date.now() - startTs)));
 	};
 
@@ -97,37 +90,76 @@
 		hideRipple();
 	};
 
-	const showRippleTouch = (e: TouchEvent) => {
-		clicked = true;
-		rippleShowEvent(e.changedTouches[0].pageX, e.changedTouches[0].pageY);
-		run++;
-	};
-
 	$effect(() => {
 		if (!container) return;
 		const hadHostAttr = container.hasAttribute(hostAttr);
 		const hostCount = Number(container.dataset[hostCountDataKey] || '0') + 1;
 		container.dataset[hostCountDataKey] = String(hostCount);
 		container.setAttribute(hostAttr, '');
+		const node = container;
+
+		const showRipplePointer = (e: PointerEvent) => {
+			if (pointerId !== -1 && pointerId !== e.pointerId) return;
+			pointerId = e.pointerId;
+			clicked = true;
+			rippleShowEvent(e.pageX, e.pageY);
+			if (e.pointerType !== 'mouse') {
+				try {
+					node.setPointerCapture(e.pointerId);
+				} catch {}
+			}
+		};
+
+		const hideRipplePointer = (e: PointerEvent) => {
+			if (pointerId !== e.pointerId) return;
+			pointerId = -1;
+			if (node.hasPointerCapture(e.pointerId)) {
+				try {
+					node.releasePointerCapture(e.pointerId);
+				} catch {}
+			}
+			hideRipple();
+		};
+
+		const cancelRipplePointer = (e: PointerEvent) => {
+			if (pointerId !== e.pointerId) return;
+			pointerId = -1;
+			if (node.hasPointerCapture(e.pointerId)) {
+				try {
+					node.releasePointerCapture(e.pointerId);
+				} catch {}
+			}
+			exitRipple();
+		};
+
+		const leaveRipplePointer = (e: PointerEvent) => {
+			if (e.pointerType !== 'mouse' || pointerId !== e.pointerId) return;
+			pointerId = -1;
+			if (node.hasPointerCapture(e.pointerId)) {
+				try {
+					node.releasePointerCapture(e.pointerId);
+				} catch {}
+			}
+			exitRipple();
+		};
 
 		const handlers = [
-			on(container, 'mousedown', showRippleMouse),
-			on(container, 'mouseup', hideRipple),
-			on(container, 'mouseleave', exitRipple),
-			on(container, 'touchstart', showRippleTouch),
-			on(container, 'touchend', hideRipple),
-			on(container, 'touchcancel', exitRipple)
+			on(node, 'pointerdown', showRipplePointer),
+			on(node, 'pointerup', hideRipplePointer),
+			on(node, 'pointercancel', cancelRipplePointer),
+			on(node, 'pointerleave', leaveRipplePointer)
 		];
 
 		return () => {
+			pointerId = -1;
 			handlers.forEach((h) => h());
-			const nextHostCount = Number(container.dataset[hostCountDataKey] || '1') - 1;
+			const nextHostCount = Number(node.dataset[hostCountDataKey] || '1') - 1;
 			if (nextHostCount <= 0) {
-				delete container.dataset[hostCountDataKey];
-				if (!hadHostAttr) container.removeAttribute(hostAttr);
+				delete node.dataset[hostCountDataKey];
+				if (!hadHostAttr) node.removeAttribute(hostAttr);
 				return;
 			}
-			container.dataset[hostCountDataKey] = String(nextHostCount);
+			node.dataset[hostCountDataKey] = String(nextHostCount);
 		};
 	});
 </script>
