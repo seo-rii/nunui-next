@@ -1,13 +1,46 @@
 <script lang="ts">
 	import { flushSync } from 'svelte';
 	import { on } from 'svelte/events';
+	import type { Renderable } from '$lib/util.svelte.js';
 	import Render from '../etc/Render.svelte';
+
+	type Placement = 'tl' | 'tc' | 'tr' | 'ml' | 'mr' | 'bl' | 'bc' | 'br';
+	type AxisValue = number | { vertical?: number; horizontal?: number };
+	type AutoMoveOption =
+		| boolean
+		| {
+				threshold?: AxisValue;
+				ratio?: AxisValue;
+		  };
+
+	const DEFAULT_AUTOMOVE_THRESHOLD = 96;
+	const DEFAULT_AUTOMOVE_RATIO = 1.5;
+	const PAPER_MARGIN = 12;
+	const PAPER_OFFSET = 4;
+
+	interface PaperDesktopProps {
+		children?: Renderable;
+		show?: boolean;
+		panel?: HTMLElement | null;
+		remap?: boolean;
+		automove?: AutoMoveOption;
+		tl?: boolean;
+		tc?: boolean;
+		tr?: boolean;
+		ml?: boolean;
+		mr?: boolean;
+		bl?: boolean;
+		bc?: boolean;
+		br?: boolean;
+		[key: string]: any;
+	}
 
 	let {
 		children,
 		show = $bindable(false),
 		panel = $bindable<HTMLElement | null>(null),
 		remap,
+		automove = true,
 
 		tl,
 		tc,
@@ -18,10 +51,11 @@
 		bc,
 		br,
 		...rest
-	} = $props();
+	}: PaperDesktopProps = $props();
 	let mh = $state('100vh'),
 		mw = $state('100vw');
 	let render = $state(false);
+	let resolvedPlacement = $state<Placement | null>(null);
 	let scrollX = $state(0),
 		scrollY = $state(0);
 
@@ -110,76 +144,189 @@
 
 		flushSync();
 		const { innerHeight, innerWidth } = window;
-		if (tl || tc || tr) {
-			mh = `${elTop - 12}px`;
-		} else if (bl || bc || br) {
-			mh = `${innerHeight - elBottom - 12}px`;
-		} else {
-			mh = `${Math.min(elTop, innerHeight - elBottom) - 12}px`;
+		const topSpace = Math.max(0, elTop - PAPER_MARGIN);
+		const bottomSpace = Math.max(0, innerHeight - elBottom - PAPER_MARGIN);
+		const startAlignedSpace = Math.max(0, innerWidth - elLeft - PAPER_MARGIN);
+		const endAlignedSpace = Math.max(0, elRight - PAPER_MARGIN);
+		const leftSideSpace = Math.max(0, elLeft - PAPER_MARGIN);
+		const rightSideSpace = Math.max(0, innerWidth - elRight - PAPER_MARGIN);
+
+		let placement: Placement | null = null;
+		if (tl) placement = 'tl';
+		else if (tc) placement = 'tc';
+		else if (tr) placement = 'tr';
+		else if (ml) placement = 'ml';
+		else if (mr) placement = 'mr';
+		else if (bl) placement = 'bl';
+		else if (bc) placement = 'bc';
+		else if (br) placement = 'br';
+
+		let verticalThreshold = DEFAULT_AUTOMOVE_THRESHOLD;
+		let horizontalThreshold = DEFAULT_AUTOMOVE_THRESHOLD;
+		let verticalRatio = DEFAULT_AUTOMOVE_RATIO;
+		let horizontalRatio = DEFAULT_AUTOMOVE_RATIO;
+
+		if (automove && typeof automove === 'object') {
+			const threshold = automove.threshold;
+			const ratio = automove.ratio;
+
+			if (typeof threshold === 'number' && Number.isFinite(threshold)) {
+				verticalThreshold = threshold;
+				horizontalThreshold = threshold;
+			} else if (threshold && typeof threshold === 'object') {
+				if (typeof threshold.vertical === 'number' && Number.isFinite(threshold.vertical)) {
+					verticalThreshold = threshold.vertical;
+				}
+				if (typeof threshold.horizontal === 'number' && Number.isFinite(threshold.horizontal)) {
+					horizontalThreshold = threshold.horizontal;
+				}
+			}
+
+			if (typeof ratio === 'number' && Number.isFinite(ratio)) {
+				verticalRatio = ratio;
+				horizontalRatio = ratio;
+			} else if (ratio && typeof ratio === 'object') {
+				if (typeof ratio.vertical === 'number' && Number.isFinite(ratio.vertical)) {
+					verticalRatio = ratio.vertical;
+				}
+				if (typeof ratio.horizontal === 'number' && Number.isFinite(ratio.horizontal)) {
+					horizontalRatio = ratio.horizontal;
+				}
+			}
 		}
 
-		if (tl || bl) {
-			mw = `${innerWidth - elLeft - 12}px`;
-		} else if (tr || br) {
-			mw = `${elRight - 12}px`;
-		} else if (ml) {
-			mw = `${elLeft - 12}px`;
-		} else if (mr) {
-			mw = `${innerWidth - elRight - 12}px`;
-		} else {
-			mw = `${Math.min(innerWidth - elLeft, elRight) - 12}px`;
+		verticalThreshold = Math.max(0, verticalThreshold);
+		horizontalThreshold = Math.max(0, horizontalThreshold);
+		verticalRatio = Math.max(1, verticalRatio);
+		horizontalRatio = Math.max(1, horizontalRatio);
+
+		if (automove !== false && placement) {
+			let currentVerticalSpace = -1;
+			let oppositeVerticalSpace = -1;
+			if (placement === 'tl' || placement === 'tc' || placement === 'tr') {
+				currentVerticalSpace = topSpace;
+				oppositeVerticalSpace = bottomSpace;
+			} else if (placement === 'bl' || placement === 'bc' || placement === 'br') {
+				currentVerticalSpace = bottomSpace;
+				oppositeVerticalSpace = topSpace;
+			}
+
+			if (
+				currentVerticalSpace >= 0 &&
+				currentVerticalSpace < verticalThreshold &&
+				oppositeVerticalSpace >= currentVerticalSpace * verticalRatio
+			) {
+				if (placement === 'tl') placement = 'bl';
+				else if (placement === 'tc') placement = 'bc';
+				else if (placement === 'tr') placement = 'br';
+				else if (placement === 'bl') placement = 'tl';
+				else if (placement === 'bc') placement = 'tc';
+				else if (placement === 'br') placement = 'tr';
+			}
+
+			let currentHorizontalSpace = -1;
+			let oppositeHorizontalSpace = -1;
+			if (placement === 'tl' || placement === 'bl') {
+				currentHorizontalSpace = startAlignedSpace;
+				oppositeHorizontalSpace = endAlignedSpace;
+			} else if (placement === 'tr' || placement === 'br') {
+				currentHorizontalSpace = endAlignedSpace;
+				oppositeHorizontalSpace = startAlignedSpace;
+			} else if (placement === 'ml') {
+				currentHorizontalSpace = leftSideSpace;
+				oppositeHorizontalSpace = rightSideSpace;
+			} else if (placement === 'mr') {
+				currentHorizontalSpace = rightSideSpace;
+				oppositeHorizontalSpace = leftSideSpace;
+			}
+
+			if (
+				currentHorizontalSpace >= 0 &&
+				currentHorizontalSpace < horizontalThreshold &&
+				oppositeHorizontalSpace >= currentHorizontalSpace * horizontalRatio
+			) {
+				if (placement === 'tl') placement = 'tr';
+				else if (placement === 'tr') placement = 'tl';
+				else if (placement === 'bl') placement = 'br';
+				else if (placement === 'br') placement = 'bl';
+				else if (placement === 'ml') placement = 'mr';
+				else if (placement === 'mr') placement = 'ml';
+			}
 		}
+
+		resolvedPlacement = placement;
+
+		if (placement === 'tl' || placement === 'tc' || placement === 'tr') {
+			mh = `${topSpace}px`;
+		} else if (placement === 'bl' || placement === 'bc' || placement === 'br') {
+			mh = `${bottomSpace}px`;
+		} else {
+			mh = `${Math.min(topSpace, bottomSpace)}px`;
+		}
+
+		if (placement === 'tl' || placement === 'bl') {
+			mw = `${startAlignedSpace}px`;
+		} else if (placement === 'tr' || placement === 'br') {
+			mw = `${endAlignedSpace}px`;
+		} else if (placement === 'ml') {
+			mw = `${leftSideSpace}px`;
+		} else if (placement === 'mr') {
+			mw = `${rightSideSpace}px`;
+		} else {
+			mw = `${Math.min(startAlignedSpace, endAlignedSpace)}px`;
+		}
+
 		if (remap) {
-			if (tl) {
-				left = elLeft + 'px';
-				bottom = innerHeight - elTop + 4 + 'px';
-			} else if (tc) {
-				left = (elLeft + elRight) / 2 + 'px';
-				bottom = innerHeight - elTop + 4 + 'px';
-			} else if (tr) {
-				right = innerWidth - elRight + 'px';
-				bottom = innerHeight - elTop + 4 + 'px';
-			} else if (ml) {
-				right = innerWidth - elLeft + 4 + 'px';
-				top = (elTop + elBottom) / 2 + 'px';
-			} else if (mr) {
-				left = elRight + 4 + 'px';
-				top = (elTop + elBottom) / 2 + 'px';
-			} else if (bl) {
-				left = elLeft + 'px';
-				top = elBottom + 4 + 'px';
-			} else if (bc) {
-				left = (elLeft + elRight) / 2 + 'px';
-				top = elBottom + 4 + 'px';
-			} else if (br) {
-				right = innerWidth - elRight + 'px';
-				top = elBottom + 4 + 'px';
+			if (placement === 'tl') {
+				left = `${elLeft}px`;
+				bottom = `${innerHeight - elTop + PAPER_OFFSET}px`;
+			} else if (placement === 'tc') {
+				left = `${(elLeft + elRight) / 2}px`;
+				bottom = `${innerHeight - elTop + PAPER_OFFSET}px`;
+			} else if (placement === 'tr') {
+				right = `${innerWidth - elRight}px`;
+				bottom = `${innerHeight - elTop + PAPER_OFFSET}px`;
+			} else if (placement === 'ml') {
+				right = `${innerWidth - elLeft + PAPER_OFFSET}px`;
+				top = `${(elTop + elBottom) / 2}px`;
+			} else if (placement === 'mr') {
+				left = `${elRight + PAPER_OFFSET}px`;
+				top = `${(elTop + elBottom) / 2}px`;
+			} else if (placement === 'bl') {
+				left = `${elLeft}px`;
+				top = `${elBottom + PAPER_OFFSET}px`;
+			} else if (placement === 'bc') {
+				left = `${(elLeft + elRight) / 2}px`;
+				top = `${elBottom + PAPER_OFFSET}px`;
+			} else if (placement === 'br') {
+				right = `${innerWidth - elRight}px`;
+				top = `${elBottom + PAPER_OFFSET}px`;
 			}
 		} else {
-			if (tl) {
+			if (placement === 'tl') {
 				left = '0';
-				bottom = 'calc(100% + 4px)';
-			} else if (tc) {
+				bottom = `calc(100% + ${PAPER_OFFSET}px)`;
+			} else if (placement === 'tc') {
 				left = '50%';
-				bottom = 'calc(100% + 4px)';
-			} else if (tr) {
+				bottom = `calc(100% + ${PAPER_OFFSET}px)`;
+			} else if (placement === 'tr') {
 				right = '0';
-				bottom = 'calc(100% + 4px)';
-			} else if (ml) {
-				right = 'calc(100% + 4px)';
+				bottom = `calc(100% + ${PAPER_OFFSET}px)`;
+			} else if (placement === 'ml') {
+				right = `calc(100% + ${PAPER_OFFSET}px)`;
 				top = '50%';
-			} else if (mr) {
-				left = 'calc(100% + 4px)';
+			} else if (placement === 'mr') {
+				left = `calc(100% + ${PAPER_OFFSET}px)`;
 				top = '50%';
-			} else if (bl) {
+			} else if (placement === 'bl') {
 				left = '0';
-				top = 'calc(100% + 4px)';
-			} else if (bc) {
+				top = `calc(100% + ${PAPER_OFFSET}px)`;
+			} else if (placement === 'bc') {
 				left = '50%';
-				top = 'calc(100% + 4px)';
-			} else if (br) {
+				top = `calc(100% + ${PAPER_OFFSET}px)`;
+			} else if (placement === 'br') {
 				right = '0';
-				top = 'calc(100% + 4px)';
+				top = `calc(100% + ${PAPER_OFFSET}px)`;
 			}
 		}
 		flushSync();
@@ -196,14 +343,14 @@
 	<main
 		class:exit={!show}
 		{...rest}
-		class:tl
-		class:tc
-		class:tr
-		class:ml
-		class:mr
-		class:bl
-		class:bc
-		class:br
+		class:tl={resolvedPlacement === 'tl'}
+		class:tc={resolvedPlacement === 'tc'}
+		class:tr={resolvedPlacement === 'tr'}
+		class:ml={resolvedPlacement === 'ml'}
+		class:mr={resolvedPlacement === 'mr'}
+		class:bl={resolvedPlacement === 'bl'}
+		class:bc={resolvedPlacement === 'bc'}
+		class:br={resolvedPlacement === 'br'}
 		style:max-height={mh}
 		style:max-width={mw}
 		style:left

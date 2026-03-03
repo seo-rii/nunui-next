@@ -11,6 +11,12 @@
 		hover?: boolean;
 		mobile?: boolean;
 		target?: Renderable;
+		automove?:
+			| boolean
+			| {
+					threshold?: number | { vertical?: number; horizontal?: number };
+					ratio?: number | { vertical?: number; horizontal?: number };
+			  };
 		tl?: boolean;
 		tc?: boolean;
 		tr?: boolean;
@@ -53,6 +59,7 @@
 		bl,
 		bc,
 		br,
+		automove = true,
 		show: _show = $bindable(false),
 		mobile: _mobile,
 		dense = false,
@@ -161,35 +168,30 @@
 	</div>
 	{#if show}
 		{#if useMobile}
-			<PaperMobile
-				bind:show={_show}
-				bind:panel={panel}
-				onclick={() => (ig = true)}
-				remap={remap}
-				{...rest}
-			>
+			<PaperMobile bind:show={_show} bind:panel onclick={() => (ig = true)} {remap} {...rest}>
 				<div class="m" class:dense use:hovering={hoverTarget}>
-					<Render children={children} />
+					<Render {children} />
 				</div>
 			</PaperMobile>
 		{:else}
 			<PaperDesktop
-				bind:panel={panel}
-				remap={remap}
+				bind:panel
+				{remap}
 				bind:show={_show}
 				onclick={() => (ig = true)}
-				tl={tl}
-				tc={tc}
-				tr={tr}
-				ml={ml}
-				mr={mr}
-				bl={bl}
-				bc={bc}
-				br={br}
+				{tl}
+				{tc}
+				{tr}
+				{ml}
+				{mr}
+				{bl}
+				{bc}
+				{br}
+				{automove}
 				{...rest}
 			>
 				<div class="d" class:dense use:hovering={hoverTarget}>
-					<Render children={children} />
+					<Render {children} />
 				</div>
 			</PaperDesktop>
 		{/if}
