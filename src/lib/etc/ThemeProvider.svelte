@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { flushSync, setContext, tick } from 'svelte';
+	import { setContext } from 'svelte';
 	import { Render } from '$lib/index.js';
 	import SnackbarContainer from '$lib/notify/SnackbarContainer.svelte';
 	import DialogContainer from '$lib/notify/DialogContainer.svelte';
@@ -31,9 +31,25 @@
 		vibrate = true
 	}: ThemeProviderProps = $props();
 
-	const style = $derived(
+	const rootStyleText = $derived(
 		`<style>:root{--theme:${primary};--primary:${primary};--secondary:${secondary};--surface:${surface};--on-primary:${onPrimary};--on-theme:${primary};--on-secondary:${onSecondary};--on-surface:${onSurface};}</style>`
 	);
+
+	$effect(() => {
+		if (typeof window === 'undefined') return;
+		let raf1 = 0;
+		let raf2 = 0;
+		raf1 = window.requestAnimationFrame(() => {
+			raf2 = window.requestAnimationFrame(() => {
+				document.querySelectorAll('#nunui-ripple-has-fallback').forEach((node) => node.remove());
+			});
+		});
+
+		return () => {
+			if (raf1) window.cancelAnimationFrame(raf1);
+			if (raf2) window.cancelAnimationFrame(raf2);
+		};
+	});
 
 	setContext('config', {
 		get mobile() {
@@ -46,7 +62,17 @@
 </script>
 
 <svelte:head>
-	{@html style}
+	{@html rootStyleText}
+	<style id="nunui-ripple-has-fallback">
+		*:has(> ._r) {
+			position: relative;
+			overflow: hidden;
+		}
+
+		*:has(> ._r):hover > .h {
+			opacity: var(--opacity, 0.2);
+		}
+	</style>
 </svelte:head>
 
 <Render {children} />

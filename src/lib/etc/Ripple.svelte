@@ -14,6 +14,8 @@
 	}
 
 	const duration = 400;
+	const hostAttr = 'data-nnr';
+	const hostCountDataKey = 'nunuiRippleHostCount';
 	let {
 		center,
 		extra,
@@ -103,6 +105,11 @@
 
 	$effect(() => {
 		if (!container) return;
+		const hadHostAttr = container.hasAttribute(hostAttr);
+		const hostCount = Number(container.dataset[hostCountDataKey] || '0') + 1;
+		container.dataset[hostCountDataKey] = String(hostCount);
+		container.setAttribute(hostAttr, '');
+
 		const handlers = [
 			on(container, 'mousedown', showRippleMouse),
 			on(container, 'mouseup', hideRipple),
@@ -112,7 +119,16 @@
 			on(container, 'touchcancel', exitRipple)
 		];
 
-		return () => handlers.forEach((h) => h());
+		return () => {
+			handlers.forEach((h) => h());
+			const nextHostCount = Number(container.dataset[hostCountDataKey] || '1') - 1;
+			if (nextHostCount <= 0) {
+				delete container.dataset[hostCountDataKey];
+				if (!hadHostAttr) container.removeAttribute(hostAttr);
+				return;
+			}
+			container.dataset[hostCountDataKey] = String(nextHostCount);
+		};
 	});
 </script>
 
@@ -141,7 +157,7 @@
 		pointer-events: none;
 	}
 
-	:global(*:has(> ._r)) {
+	:global([data-nnr]) {
 		position: relative;
 		overflow: hidden;
 	}
@@ -193,7 +209,7 @@
 		transition: opacity var(--dur, 200ms) ease;
 	}
 
-	:global(*:has(> ._r):hover) > .h {
+	:global([data-nnr]:hover) > .h {
 		opacity: var(--opacity, 0.2);
 	}
 
