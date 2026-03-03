@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { HTMLAttributes } from 'svelte/elements';
+	import type { Renderable } from '$lib/util.svelte.js';
 	import { Ripple, Icon, Paper } from '$lib/index.js';
 	import { fade } from 'svelte/transition';
 
@@ -31,8 +32,6 @@
 	}: IconButtonProps = $props();
 
 	let container = $state<HTMLButtonElement | null>(null);
-	let clicked = $state(false);
-	let hover = $state(false);
 </script>
 
 {#snippet button()}
@@ -42,12 +41,12 @@
 				<div class="button" class:flat>
 					<Icon
 						{icon}
-						weight={disabled ? 300 : clicked ? 200 : hover ? 500 : 300}
+						weight={disabled ? 300 : undefined}
 						outlined={outlined === undefined ? !active : outlined}
 					/>
 				</div>
 				{#if !disabled}
-					<Ripple center bind:clicked bind:hover {active} extra={container} {primary} {secondary} />
+					<Ripple center {active} extra={container} {primary} {secondary} />
 				{:else}
 					<div class="block" transition:fade={{ duration: 200 }}></div>
 				{/if}
@@ -63,7 +62,7 @@
 	{#if typeof tooltip === 'object' && tooltip.children}
 		<Paper hover mobile={false} {...tooltip} target={button} />
 	{:else}
-		<Paper tl hover mobile={false} target={button} children={tooltip} />
+		<Paper tl hover mobile={false} target={button} children={tooltip as Renderable} />
 	{/if}
 {:else}
 	{@render button()}
@@ -131,12 +130,21 @@
 					& :global(*) {
 						font-size: calc(var(--size) * 0.7);
 						line-height: calc(var(--size) * 0.7);
+						--weight: 300;
 					}
 
 					&.flat {
 						width: calc(var(--size) * 1.25);
 						height: calc(var(--size) * 0.75);
 					}
+				}
+
+				&:hover .button :global(*) {
+					--weight: 500;
+				}
+
+				&:active .button :global(*) {
+					--weight: 200;
 				}
 			}
 		}
