@@ -30,8 +30,9 @@
 		y = $state(0),
 		size = $state(0);
 	let show = $state(false),
-		active = delayedToggle(false, 0);
+		active = delayedToggle(!!_active, 0);
 	let render = delayedToggle(false, duration, duration);
+	let skipInitialActiveAnimation = $state(!!_active);
 	let adapter: HTMLElement | null = null,
 		startTs = 0;
 	let iv = 0,
@@ -40,11 +41,13 @@
 	let container = $derived(extra || (adapter as HTMLElement | null)?.parentElement);
 
 	$effect(() => {
-		active.v = !!_active;
+		const next = !!_active;
+		if (active.r !== next) active.v = next;
+		if (!next && skipInitialActiveAnimation) skipInitialActiveAnimation = false;
 	});
 
 	$effect(() => {
-		render.v = show;
+		if (render.r !== show) render.v = show;
 	});
 
 	const rippleSize = (targetX: number, targetY: number) => {
@@ -130,7 +133,7 @@
 
 <span class="h" class:c={center}></span>
 {#if active.v}
-	<span class="a" class:e={!active.r} class:c={center}></span>
+	<span class="a" class:e={!active.r} class:i={skipInitialActiveAnimation} class:c={center}></span>
 {/if}
 
 <style>
@@ -197,6 +200,10 @@
 	.a {
 		opacity: var(--opacity, 0.2);
 		animation: fadeIn var(--dur, 200ms) ease forwards;
+
+		&.i {
+			animation: none;
+		}
 
 		&.e {
 			animation: fadeOut var(--dur, 200ms) ease forwards;
