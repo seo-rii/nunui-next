@@ -109,83 +109,81 @@
 		bottom = '';
 
 		flushSync();
-		setTimeout(() => {
-			const { innerHeight, innerWidth } = window;
-			if (tl || tc || tr) {
-				mh = `${elTop - 12}px`;
-			} else if (bl || bc || br) {
-				mh = `${innerHeight - elBottom - 12}px`;
-			} else {
-				mh = `${Math.min(elTop, innerHeight - elBottom) - 12}px`;
-			}
+		const { innerHeight, innerWidth } = window;
+		if (tl || tc || tr) {
+			mh = `${elTop - 12}px`;
+		} else if (bl || bc || br) {
+			mh = `${innerHeight - elBottom - 12}px`;
+		} else {
+			mh = `${Math.min(elTop, innerHeight - elBottom) - 12}px`;
+		}
 
-			if (tl || bl) {
-				mw = `${innerWidth - elLeft - 12}px`;
-			} else if (tr || br) {
-				mw = `${elRight - 12}px`;
+		if (tl || bl) {
+			mw = `${innerWidth - elLeft - 12}px`;
+		} else if (tr || br) {
+			mw = `${elRight - 12}px`;
+		} else if (ml) {
+			mw = `${elLeft - 12}px`;
+		} else if (mr) {
+			mw = `${innerWidth - elRight - 12}px`;
+		} else {
+			mw = `${Math.min(innerWidth - elLeft, elRight) - 12}px`;
+		}
+		if (remap) {
+			if (tl) {
+				left = elLeft + 'px';
+				bottom = innerHeight - elTop + 4 + 'px';
+			} else if (tc) {
+				left = (elLeft + elRight) / 2 + 'px';
+				bottom = innerHeight - elTop + 4 + 'px';
+			} else if (tr) {
+				right = innerWidth - elRight + 'px';
+				bottom = innerHeight - elTop + 4 + 'px';
 			} else if (ml) {
-				mw = `${elLeft - 12}px`;
+				right = innerWidth - elLeft + 4 + 'px';
+				top = (elTop + elBottom) / 2 + 'px';
 			} else if (mr) {
-				mw = `${innerWidth - elRight - 12}px`;
-			} else {
-				mw = `${Math.min(innerWidth - elLeft, elRight) - 12}px`;
+				left = elRight + 4 + 'px';
+				top = (elTop + elBottom) / 2 + 'px';
+			} else if (bl) {
+				left = elLeft + 'px';
+				top = elBottom + 4 + 'px';
+			} else if (bc) {
+				left = (elLeft + elRight) / 2 + 'px';
+				top = elBottom + 4 + 'px';
+			} else if (br) {
+				right = innerWidth - elRight + 'px';
+				top = elBottom + 4 + 'px';
 			}
-			if (remap) {
-				if (tl) {
-					left = elLeft + 'px';
-					bottom = innerHeight - elTop + 4 + 'px';
-				} else if (tc) {
-					left = (elLeft + elRight) / 2 + 'px';
-					bottom = innerHeight - elTop + 4 + 'px';
-				} else if (tr) {
-					right = innerWidth - elRight + 'px';
-					bottom = innerHeight - elTop + 4 + 'px';
-				} else if (ml) {
-					right = innerWidth - elLeft + 4 + 'px';
-					top = (elTop + elBottom) / 2 + 'px';
-				} else if (mr) {
-					left = elRight + 4 + 'px';
-					top = (elTop + elBottom) / 2 + 'px';
-				} else if (bl) {
-					left = elLeft + 'px';
-					top = elBottom + 4 + 'px';
-				} else if (bc) {
-					left = (elLeft + elRight) / 2 + 'px';
-					top = elBottom + 4 + 'px';
-				} else if (br) {
-					right = innerWidth - elRight + 'px';
-					top = elBottom + 4 + 'px';
-				}
-			} else {
-				if (tl) {
-					left = '0';
-					bottom = 'calc(100% + 4px)';
-				} else if (tc) {
-					left = '50%';
-					bottom = 'calc(100% + 4px)';
-				} else if (tr) {
-					right = '0';
-					bottom = 'calc(100% + 4px)';
-				} else if (ml) {
-					right = 'calc(100% + 4px)';
-					top = '50%';
-				} else if (mr) {
-					left = 'calc(100% + 4px)';
-					top = '50%';
-				} else if (bl) {
-					left = '0';
-					top = 'calc(100% + 4px)';
-				} else if (bc) {
-					left = '50%';
-					top = 'calc(100% + 4px)';
-				} else if (br) {
-					right = '0';
-					top = 'calc(100% + 4px)';
-				}
+		} else {
+			if (tl) {
+				left = '0';
+				bottom = 'calc(100% + 4px)';
+			} else if (tc) {
+				left = '50%';
+				bottom = 'calc(100% + 4px)';
+			} else if (tr) {
+				right = '0';
+				bottom = 'calc(100% + 4px)';
+			} else if (ml) {
+				right = 'calc(100% + 4px)';
+				top = '50%';
+			} else if (mr) {
+				left = 'calc(100% + 4px)';
+				top = '50%';
+			} else if (bl) {
+				left = '0';
+				top = 'calc(100% + 4px)';
+			} else if (bc) {
+				left = '50%';
+				top = 'calc(100% + 4px)';
+			} else if (br) {
+				right = '0';
+				top = 'calc(100% + 4px)';
 			}
-			flushSync();
-			render = true;
-		}, 0);
+		}
+		flushSync();
+		render = true;
 
 		return () => {
 			if (remap) (root as HTMLDivElement).appendChild(panel as any);
@@ -213,6 +211,7 @@
 		style:right
 		style:bottom
 		class:remap
+		class:ready={render}
 		bind:this={panel}
 	>
 		{#if render}
@@ -225,15 +224,22 @@
 	main {
 		box-shadow: 0 0 10px color-mix(in srgb, var(--on-surface) 16%, transparent);
 		background: var(--surface);
-		animation: show 0.15s cubic-bezier(0, 0.75, 0.25, 1);
 		width: max-content;
 		position: absolute;
 		border-radius: 12px;
-		--transform: translate(0, 0);
+		translate: var(--paper-translate-x, 0) var(--paper-translate-y, 0);
 
 		z-index: var(--paper-z-index, 3);
 		overflow: auto;
 		overscroll-behavior: contain;
+		opacity: 0;
+		pointer-events: none;
+
+		&.ready {
+			animation: show 0.15s cubic-bezier(0, 0.75, 0.25, 1);
+			opacity: 1;
+			pointer-events: auto;
+		}
 
 		&.remap {
 			position: fixed;
@@ -242,6 +248,7 @@
 
 		&.exit {
 			animation: hide 0.2s cubic-bezier(1, 0, 0.67, 1) forwards;
+			pointer-events: none;
 		}
 
 		&.tl {
@@ -249,8 +256,7 @@
 		}
 
 		&.tc {
-			--transform: translateX(-50%);
-			transform: translateX(-50%);
+			--paper-translate-x: -50%;
 			transform-origin: bottom center;
 		}
 
@@ -259,14 +265,12 @@
 		}
 
 		&.ml {
-			--transform: translateY(-50%);
-			transform: translateY(-50%);
+			--paper-translate-y: -50%;
 			transform-origin: center right;
 		}
 
 		&.mr {
-			--transform: translateY(-50%);
-			transform: translateY(-50%);
+			--paper-translate-y: -50%;
 			transform-origin: center left;
 		}
 
@@ -275,8 +279,7 @@
 		}
 
 		&.bc {
-			--transform: translateX(-50%);
-			transform: translateX(-50%);
+			--paper-translate-x: -50%;
 			transform-origin: top center;
 		}
 
@@ -290,22 +293,22 @@
 	@keyframes show {
 		from {
 			opacity: 0;
-			transform: scale(0.85) var(--transform);
+			transform: scale(0.85);
 		}
 		to {
 			opacity: 1;
-			transform: scale(1) var(--transform);
+			transform: scale(1);
 		}
 	}
 
 	@keyframes hide {
 		from {
 			opacity: 1;
-			transform: scale(1) var(--transform);
+			transform: scale(1);
 		}
 		to {
 			opacity: 0;
-			transform: scale(0.8) var(--transform);
+			transform: scale(0.8);
 		}
 	}
 </style>
