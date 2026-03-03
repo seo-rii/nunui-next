@@ -11,9 +11,23 @@
 		title?: Renderable;
 		icon?: string;
 		active?: boolean;
+		rippleColor?: string;
+		trailingIcon?: string;
 	}
 
-	let { title, icon, active, onclick, onkeydown, ...rest }: OneLineProps = $props();
+	let {
+		title,
+		icon,
+		active,
+		rippleColor,
+		trailingIcon,
+		onclick,
+		onkeydown,
+		class: className = '',
+		role: roleProp,
+		tabindex: tabindexProp,
+		...rest
+	}: OneLineProps = $props();
 
 	const handleKeydown = (e: KeyboardEvent) => {
 		onkeydown?.(e as SvelteKeyboardEvent);
@@ -29,16 +43,36 @@
 	{#if icon}
 		<Icon {icon} />
 	{/if}
-	<Render it={title} />
+	<span class="main"><Render it={title} /></span>
+	{#if trailingIcon}
+		<Icon class="tail option-check" icon={trailingIcon} />
+	{/if}
 	<Ripple {active} />
 {/snippet}
 
 {#if onclick}
-	<div class="item" {...rest} {onclick} onkeydown={handleKeydown} role="button" tabindex="0">
+	<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+	<div
+		class={`item ${className}`.trim()}
+		style:--ripple-color={rippleColor || undefined}
+		{...rest}
+		{onclick}
+		onkeydown={handleKeydown}
+		role={roleProp ?? 'button'}
+		tabindex={tabindexProp ?? 0}
+	>
 		{@render content()}
 	</div>
 {:else}
-	<div class="item" {...rest}>
+	<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+	<div
+		class={`item ${className}`.trim()}
+		style:--ripple-color={rippleColor || undefined}
+		{...rest}
+		onkeydown={handleKeydown}
+		role={roleProp}
+		tabindex={tabindexProp}
+	>
 		{@render content()}
 	</div>
 {/if}
@@ -50,5 +84,18 @@
 		padding: 8px 12px;
 		position: relative;
 		align-items: center;
+	}
+
+	.main {
+		flex: 1;
+		min-width: 0;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.tail {
+		margin-left: auto;
+		flex-shrink: 0;
 	}
 </style>
