@@ -1,0 +1,38 @@
+{
+	"name": "nunui",
+	"version": "2.0.0-next.53",
+	"description": "Material 3 based lightweight Svelte 5 UI components library.",
+	"scripts": {
+		"dev": "NODE_ENV=production svelte-kit sync && svelte-package --watch --preserve-output",
+		"build": "pnpm run package",
+		"package": "NODE_ENV=production svelte-kit sync && svelte-package",
+		"publint": "publint",
+		"prepublishOnly": "pnpm run package",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"lint": "prettier --check . && eslint .",
+		"format": "prettier --write ."
+	},
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"svelte": "./dist/index.js"
+		},
+		"./base.css": "./dist/etc/base.css"
+	},
+	"files": [
+		"README.md",
+		"dist",
+		"!dist/**/*.test.*",
+		"!dist/**/*.spec.*"
+	],
+	"peerDependencies": {
+		"svelte": "^5.0.0"
+	},
+	"svelte": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"type": "module",
+	"dependencies": {
+		"autosize": "^6.0.1"
+	}
+}

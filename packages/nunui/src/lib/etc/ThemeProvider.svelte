@@ -28,12 +28,15 @@
 		onSecondary = '#000000',
 		onSurface = '#000000',
 		mobile = false,
+		local = false,
 		vibrate = true
 	}: ThemeProviderProps = $props();
 
-	const rootStyleText = $derived(
-		`<style>:root{--theme:${primary};--primary:${primary};--secondary:${secondary};--surface:${surface};--on-primary:${onPrimary};--on-theme:${primary};--on-secondary:${onSecondary};--on-surface:${onSurface};}</style>`
+	const themeVars = $derived(
+		`--theme:${primary};--primary:${primary};--secondary:${secondary};--surface:${surface};--on-primary:${onPrimary};--on-theme:${onPrimary};--on-secondary:${onSecondary};--on-surface:${onSurface};`
 	);
+
+	const rootStyleText = $derived(local ? '' : `<style>:root{${themeVars}}</style>`);
 
 	$effect(() => {
 		if (typeof window === 'undefined') return;
@@ -75,6 +78,19 @@
 	</style>
 </svelte:head>
 
-<Render {children} />
-<SnackbarContainer />
-<DialogContainer />
+{#if local}
+	<div class="scope" style={themeVars}>
+		<Render {children} />
+	</div>
+{:else}
+	<Render {children} />
+	<SnackbarContainer />
+	<DialogContainer />
+{/if}
+
+<style>
+	.scope {
+		display: block;
+		color: var(--on-surface);
+	}
+</style>

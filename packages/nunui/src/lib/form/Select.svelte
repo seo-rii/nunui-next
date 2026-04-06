@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
+	import { tick } from 'svelte';
 	import Icon from '$lib/etc/Icon.svelte';
 	import Render from '$lib/etc/Render.svelte';
 	import Ripple from '$lib/etc/Ripple.svelte';
@@ -9,6 +10,9 @@
 	import { uniqueId, type Renderable } from '$lib/util.svelte.js';
 
 	type SelectValue = string | number | boolean | null;
+	type SelectBodyHandle = {
+		focusEntryOption: (direction: 1 | -1) => void;
+	};
 
 	export interface SelectOption {
 		value: SelectValue;
@@ -90,12 +94,56 @@
 
 	let panelMinWidth = $state('220px');
 	let trigger = $state<HTMLDivElement | null>(null);
+	let body = $state<SelectBodyHandle | null>(null);
+	let pendingFocusDirection = $state<1 | -1 | null>(null);
 
 	const selectOption = (option: SelectOption) => {
 		if (option.disabled) return;
 		value = option.value;
 		show = false;
 		onselect?.(option);
+	};
+
+	const focusEntryOption = (direction: 1 | -1) => {
+		if (show) {
+			body?.focusEntryOption(direction);
+			return;
+		}
+		pendingFocusDirection = direction;
+		show = true;
+	};
+
+	const handleTriggerKeydown = (e: KeyboardEvent) => {
+		if (disabled) return;
+		const target = e.target;
+		if (
+			target instanceof HTMLInputElement ||
+			target instanceof HTMLTextAreaElement ||
+			target instanceof HTMLSelectElement ||
+			(target instanceof HTMLElement && target.isContentEditable)
+		) {
+			return;
+		}
+
+		if (e.key === 'ArrowDown') {
+			e.preventDefault();
+			focusEntryOption(1);
+			return;
+		}
+		if (e.key === 'ArrowUp') {
+			e.preventDefault();
+			focusEntryOption(-1);
+			return;
+		}
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			show = !show;
+			return;
+		}
+		if (e.key === 'Escape' && show) {
+			e.preventDefault();
+			show = false;
+		}
 	};
 
 	$effect(() => {
@@ -117,6 +165,24 @@
 		const observer = new ResizeObserver(update);
 		observer.observe(node);
 		return () => observer.disconnect();
+	});
+
+	$effect(() => {
+		if (!show || pendingFocusDirection === null) return;
+		let canceled = false;
+		tick().then(() => {
+			if (canceled || !show || pendingFocusDirection === null) return;
+			body?.focusEntryOption(pendingFocusDirection);
+			pendingFocusDirection = null;
+		});
+		return () => {
+			canceled = true;
+		};
+	});
+
+	$effect(() => {
+		if (show) return;
+		pendingFocusDirection = null;
 	});
 </script>
 
@@ -190,13 +256,23 @@
 
 	{#if disabled}
 		{@render triggerField()}
-		{:else}
-			<Paper bl dense bind:show {block} {mobile} {remap} automove={selectAutomove}>
+	{:else}
+		<Paper
+			bl
+			dense
+			bind:show
+			{block}
+			{mobile}
+			{remap}
+			automove={selectAutomove}
+			onkeydown={handleTriggerKeydown}
+		>
 			{#snippet target()}
 				{@render triggerField()}
 			{/snippet}
 
 			<SelectBody
+				bind:this={body}
 				id={`${id}-panel`}
 				{options}
 				{search}

@@ -6,6 +6,8 @@
 	import PaperMobile from '$lib/paper/PaperMobile.svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
 
+	type SvelteKeyboardEvent = KeyboardEvent & { currentTarget: EventTarget & HTMLDivElement };
+
 	interface PaperProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
 		children?: Renderable;
 		hover?: boolean;
@@ -69,6 +71,7 @@
 
 		remap = false,
 		onclick,
+		onkeydown,
 		...rest
 	}: PaperProps = $props();
 
@@ -113,6 +116,9 @@
 	};
 
 	const handleKeydown = (e: KeyboardEvent) => {
+		onkeydown?.(e as SvelteKeyboardEvent);
+		if (e.defaultPrevented) return;
+
 		if (e.key === 'Tab' && !e.shiftKey && _show) {
 			const active = document.activeElement as HTMLElement | null;
 			const current = e.currentTarget as HTMLElement | null;

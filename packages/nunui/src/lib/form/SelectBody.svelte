@@ -71,7 +71,15 @@
 	let filteredOptions = $derived.by(() => {
 		const q = normalizeText(query);
 		if (!search || !q) return options;
-		return options.filter((option) => normalizeText(toSearchText(option)).includes(q));
+		const startsWithMatches: SelectOption[] = [];
+		const includesMatches: SelectOption[] = [];
+		for (const option of options) {
+			const searchText = normalizeText(toSearchText(option));
+			if (!searchText.includes(q)) continue;
+			if (searchText.startsWith(q)) startsWithMatches.push(option);
+			else includesMatches.push(option);
+		}
+		return [...startsWithMatches, ...includesMatches];
 	});
 
 	const firstEnabledIndex = (items: SelectOption[]) =>
@@ -104,6 +112,12 @@
 		node?.focus();
 	};
 
+	const focusResolvedOption = (index: number) => {
+		if (index < 0) return;
+		activeIndex = index;
+		focusOption(index);
+	};
+
 	const moveActive = (step: number) => {
 		const items = filteredOptions;
 		if (!items.length) return;
@@ -124,6 +138,19 @@
 		}
 	};
 
+	export function focusEntryOption(direction: 1 | -1) {
+		const items = filteredOptions;
+		if (!items.length) return;
+		const selectedIndex = items.findIndex((option) => option.value === value && !option.disabled);
+		const index =
+			selectedIndex >= 0
+				? selectedIndex
+				: direction > 0
+					? firstEnabledIndex(items)
+					: lastEnabledIndex(items);
+		focusResolvedOption(index);
+	}
+
 	const selectOption = (option: SelectOption) => {
 		if (option.disabled) return;
 		value = option.value;
@@ -133,12 +160,27 @@
 	const handleSearchKeydown = (e: KeyboardEvent) => {
 		if (e.key === 'ArrowDown') {
 			e.preventDefault();
-			moveActive(1);
+			if (activeIndex >= 0) {
+				focusOption(activeIndex);
+				return;
+			}
+			focusResolvedOption(firstEnabledIndex(filteredOptions));
 			return;
 		}
 		if (e.key === 'ArrowUp') {
 			e.preventDefault();
-			moveActive(-1);
+			if (activeIndex >= 0) {
+				focusOption(activeIndex);
+				return;
+			}
+			focusResolvedOption(lastEnabledIndex(filteredOptions));
+			return;
+		}
+		if (e.key === 'Enter') {
+			e.preventDefault();
+			const index = activeIndex >= 0 ? activeIndex : firstEnabledIndex(filteredOptions);
+			const option = filteredOptions[index];
+			if (option) selectOption(option);
 			return;
 		}
 		if (e.key === 'Escape') {
@@ -210,7 +252,7 @@
 		}
 
 		if (activeIndex >= 0 && activeIndex < items.length && !items[activeIndex]?.disabled) return;
-		activeIndex = -1;
+		activeIndex = search ? -1 : firstEnabledIndex(items);
 	});
 
 	$effect(() => {

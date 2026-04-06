@@ -32,13 +32,14 @@
 	}: IconButtonProps = $props();
 
 	let container = $state<HTMLButtonElement | null>(null);
+	let useFlat = $derived(flat ?? !!label);
 </script>
 
 {#snippet button()}
 	<button type="button" {...rest} {disabled} bind:this={container}>
 		<div class="container" style:--size={+(size as number) ? size + 'px' : size || '1.8em'}>
-			<div class="wrapper" class:flat>
-				<div class="button" class:flat>
+			<div class="wrapper" class:flat={useFlat}>
+				<div class="button" class:flat={useFlat}>
 					<Icon
 						{icon}
 						weight={disabled ? 300 : undefined}
