@@ -1,25 +1,33 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { tick } from 'svelte';
 	import Icon from '$lib/etc/Icon.svelte';
 	import Render from '$lib/etc/Render.svelte';
+	import LinearProgress from '$lib/progress/LinearProgress.svelte';
 	import SelectSearch from '$lib/form/SelectSearch.svelte';
 	import List from '$lib/list/List.svelte';
 	import OneLine from '$lib/list/OneLine.svelte';
 	import TwoLine from '$lib/list/TwoLine.svelte';
-	import type { SelectOption } from '$lib/form/Select.svelte';
+	import type {
+		SelectEmptySnippetState,
+		SelectFilter,
+		SelectOption,
+		SelectOptionSnippetState,
+		SelectValue
+	} from '$lib/form/Select.svelte';
 	import type { Renderable } from '$lib/util.svelte.js';
-
-	type SelectValue = string | number | boolean | null;
 
 	interface SelectBodyProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'onselect'> {
 		id?: string;
 		value?: SelectValue;
 		options?: SelectOption[];
 		search?: boolean;
+		filter?: SelectFilter;
 		searchPlaceholder?: string;
 		emptyText?: Renderable;
 		noResultText?: Renderable;
+		loading?: boolean;
 		minWidth?: string;
 		maxHeight?: string;
 		open?: boolean;
@@ -27,6 +35,10 @@
 		ariaLabel?: string;
 		query?: string;
 		input?: HTMLInputElement | HTMLTextAreaElement;
+		optionSnippet?: Snippet<[SelectOption, SelectOptionSnippetState]> | null;
+		emptySnippet?: Snippet<[SelectEmptySnippetState]> | null;
+		beforeOptionsSnippet?: Snippet | null;
+		afterOptionsSnippet?: Snippet | null;
 		onselect?: (option: SelectOption) => void;
 		onclose?: () => void;
 	}
@@ -39,9 +51,11 @@
 		value = $bindable<SelectValue | undefined>(undefined),
 		options = [],
 		search = false,
+		filter = 'client',
 		searchPlaceholder = 'Search',
 		emptyText = 'No options',
 		noResultText = 'No matching options',
+		loading = false,
 		minWidth = '220px',
 		maxHeight = '320px',
 		open = true,
@@ -49,6 +63,10 @@
 		ariaLabel = 'Select options',
 		query = $bindable(''),
 		input = $bindable<HTMLInputElement | HTMLTextAreaElement>(),
+		optionSnippet = null,
+		emptySnippet = null,
+		beforeOptionsSnippet = null,
+		afterOptionsSnippet = null,
 		onselect,
 		onclose,
 		...rest
@@ -70,7 +88,9 @@
 
 	let filteredOptions = $derived.by(() => {
 		const q = normalizeText(query);
-		if (!search || !q) return options;
+		if (!search || !q || filter === 'none') return options;
+		if (typeof filter === 'function') return options.filter((option) => filter(option, query));
+
 		const startsWithMatches: SelectOption[] = [];
 		const includesMatches: SelectOption[] = [];
 		for (const option of options) {
@@ -103,6 +123,11 @@
 		`option${index === activeIndex ? ' active' : ''}${option.value === value ? ' selected' : ''}${
 			option.disabled ? ' disabled' : ''
 		}`;
+	const optionState = (option: SelectOption, index: number): SelectOptionSnippetState => ({
+		active: index === activeIndex,
+		selected: option.value === value,
+		disabled: !!option.disabled
+	});
 	let focusableOptionIndex = $derived.by(() =>
 		activeIndex >= 0 ? activeIndex : firstEnabledIndex(filteredOptions)
 	);
@@ -293,10 +318,40 @@
 		/>
 	{/if}
 
+	{#if loading}
+		<div class="loading">
+			<LinearProgress indeterminate />
+		</div>
+	{/if}
+
 	<List class="options">
+		{#if beforeOptionsSnippet}
+			{@render beforeOptionsSnippet()}
+		{/if}
+
 		{#if filteredOptions.length}
 			{#each filteredOptions as option, index (`${option.value}-${index}`)}
-				{#if option.subtitle}
+				{@const state = optionState(option, index)}
+				{#if optionSnippet}
+					<div
+						class={optionClassName(option, index)}
+						role="option"
+						aria-selected={state.selected}
+						aria-disabled={state.disabled}
+						tabindex={state.disabled ? -1 : index === focusableOptionIndex ? 0 : -1}
+						data-option-index={index}
+						onclick={state.disabled ? undefined : () => selectOption(option)}
+						onmouseenter={() => {
+							if (!state.disabled) activeIndex = index;
+						}}
+						onfocus={() => {
+							if (!state.disabled) activeIndex = index;
+						}}
+						onkeydown={(e) => handleOptionKeydown(e, index, option)}
+					>
+						{@render optionSnippet(option, state)}
+					</div>
+				{:else if option.subtitle}
 					<TwoLine
 						class={optionClassName(option, index)}
 						rippleColor="var(--primary)"
@@ -345,15 +400,23 @@
 			{/each}
 		{:else}
 			<div class="empty">
-				<Icon icon={search && query ? 'search_off' : 'list'} />
-				<div>
-					{#if search && query}
-						<Render it={noResultText} />
-					{:else}
-						<Render it={emptyText} />
-					{/if}
-				</div>
+				{#if emptySnippet}
+					{@render emptySnippet({ query, loading, search })}
+				{:else}
+					<Icon icon={search && query ? 'search_off' : 'list'} />
+					<div>
+						{#if search && query}
+							<Render it={noResultText} />
+						{:else}
+							<Render it={emptyText} />
+						{/if}
+					</div>
+				{/if}
 			</div>
+		{/if}
+
+		{#if afterOptionsSnippet}
+			{@render afterOptionsSnippet()}
 		{/if}
 	</List>
 </div>
@@ -371,6 +434,13 @@
 		overflow: auto;
 	}
 
+	.loading {
+		height: 4px;
+		margin-bottom: -4px;
+		position: relative;
+		z-index: 2;
+	}
+
 	.options :global(.item.option) {
 		margin: 2px 4px;
 		padding: 10px 12px;
@@ -381,17 +451,35 @@
 		transition: background-color 0.15s ease;
 	}
 
+	.options :global(.option) {
+		outline: none;
+	}
+
+	.options > .option {
+		margin: 2px 4px;
+		padding: 10px 12px;
+		border-radius: 8px;
+		color: var(--on-surface);
+		outline: none;
+		transition: background-color 0.15s ease;
+	}
+
 	.options :global(.item.option:hover),
 	.options :global(.item.option.active),
-	.options :global(.item.option:focus-visible) {
+	.options :global(.item.option:focus-visible),
+	.options > .option:hover,
+	.options > .option.active,
+	.options > .option:focus-visible {
 		background: color-mix(in srgb, var(--on-surface), transparent 92%);
 	}
 
-	.options :global(.item.option.selected) {
+	.options :global(.item.option.selected),
+	.options > .option.selected {
 		background: color-mix(in srgb, var(--on-surface), transparent 88%);
 	}
 
-	.options :global(.item.option.disabled) {
+	.options :global(.item.option.disabled),
+	.options > .option.disabled {
 		opacity: 0.45;
 		cursor: not-allowed;
 	}

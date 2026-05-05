@@ -9,9 +9,20 @@
 	import Paper from '$lib/paper/Paper.svelte';
 	import { uniqueId, type Renderable } from '$lib/util.svelte.js';
 
-	type SelectValue = string | number | boolean | null;
+	export type SelectValue = string | number | boolean | null;
+	export type SelectFilter = 'client' | 'none' | ((option: SelectOption, query: string) => boolean);
 	type SelectBodyHandle = {
 		focusEntryOption: (direction: 1 | -1) => void;
+	};
+	export type SelectOptionSnippetState = {
+		active: boolean;
+		selected: boolean;
+		disabled: boolean;
+	};
+	export type SelectEmptySnippetState = {
+		query: string;
+		loading: boolean;
+		search: boolean;
 	};
 
 	export interface SelectOption {
@@ -27,12 +38,17 @@
 		id?: string;
 		name?: string;
 		value?: SelectValue;
+		valueOption?: SelectOption | null;
 		options?: SelectOption[];
 		placeholder?: string;
 		search?: boolean;
+		query?: string;
+		input?: HTMLInputElement | HTMLTextAreaElement;
+		filter?: SelectFilter;
 		searchPlaceholder?: string;
 		emptyText?: Renderable;
 		noResultText?: Renderable;
+		loading?: boolean;
 		show?: boolean;
 		disabled?: boolean;
 		block?: boolean;
@@ -44,6 +60,10 @@
 		onselect?: (option: SelectOption) => void;
 		snippet?: Snippet<[SelectOption | undefined, SelectValue | undefined]> | null;
 		triggerSnippet?: Snippet<[SelectOption | undefined, SelectValue | undefined, boolean]> | null;
+		optionSnippet?: Snippet<[SelectOption, SelectOptionSnippetState]> | null;
+		emptySnippet?: Snippet<[SelectEmptySnippetState]> | null;
+		beforeOptionsSnippet?: Snippet | null;
+		afterOptionsSnippet?: Snippet | null;
 	}
 
 	const isTextLabel = (label: Renderable): label is string | number =>
@@ -56,12 +76,17 @@
 		id: _id,
 		name,
 		value = $bindable<SelectValue | undefined>(undefined),
+		valueOption = undefined,
 		options = [],
 		placeholder = '',
 		search = false,
+		query = $bindable(''),
+		input = $bindable<HTMLInputElement | HTMLTextAreaElement>(),
+		filter = 'client',
 		searchPlaceholder = 'Search',
 		emptyText = 'No options',
 		noResultText = 'No matching options',
+		loading = false,
 		show = $bindable(false),
 		disabled = false,
 		block,
@@ -73,12 +98,20 @@
 		onselect,
 		snippet = null,
 		triggerSnippet = null,
+		optionSnippet = null,
+		emptySnippet = null,
+		beforeOptionsSnippet = null,
+		afterOptionsSnippet = null,
 		...rest
 	}: SelectProps = $props();
 
 	let id = $derived(_id || uniqueId('select'));
 	let hiddenValue = $derived(value === undefined || value === null ? '' : String(value));
-	let selectedOption = $derived(options.find((option) => option.value === value));
+	let selectedOption = $derived(
+		valueOption === undefined
+			? options.find((option) => option.value === value)
+			: valueOption || undefined
+	);
 	let hasCustomDisplay = $derived(snippet !== null && snippet !== undefined);
 	let hasCustomTrigger = $derived(triggerSnippet !== null && triggerSnippet !== undefined);
 	let selectedText = $derived.by(() => {
@@ -279,11 +312,19 @@
 				{searchPlaceholder}
 				{emptyText}
 				{noResultText}
+				{filter}
+				{loading}
 				minWidth={panelMinWidth}
 				{maxHeight}
 				open={show}
 				ariaLabel={placeholder || 'Select options'}
 				bind:value
+				bind:query
+				bind:input
+				{optionSnippet}
+				{emptySnippet}
+				{beforeOptionsSnippet}
+				{afterOptionsSnippet}
 				onselect={selectOption}
 				onclose={() => (show = false)}
 			/>

@@ -14,6 +14,13 @@ import Checkbox from '$lib/form/Checkbox.svelte';
 import Select from '$lib/form/Select.svelte';
 import SelectBody from '$lib/form/SelectBody.svelte';
 import SelectSearch from '$lib/form/SelectSearch.svelte';
+import type {
+	SelectEmptySnippetState,
+	SelectFilter,
+	SelectOption,
+	SelectOptionSnippetState,
+	SelectValue
+} from '$lib/form/Select.svelte';
 
 import Paper from '$lib/paper/Paper.svelte';
 
@@ -57,4 +64,12 @@ export {
 	closeSnackbar,
 	addDialog,
 	closeDialog
+};
+
+export type {
+	SelectEmptySnippetState,
+	SelectFilter,
+	SelectOption,
+	SelectOptionSnippetState,
+	SelectValue
 };
