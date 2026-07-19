@@ -14,6 +14,7 @@ import Checkbox from '$lib/form/Checkbox.svelte';
 import Select from '$lib/form/Select.svelte';
 import SelectBody from '$lib/form/SelectBody.svelte';
 import SelectSearch from '$lib/form/SelectSearch.svelte';
+import Slider from '$lib/form/Slider.svelte';
 import type {
 	SelectEmptySnippetState,
 	SelectFilter,
@@ -21,6 +22,7 @@ import type {
 	SelectOptionSnippetState,
 	SelectValue
 } from '$lib/form/Select.svelte';
+import type { SliderRange, SliderValue } from '$lib/form/Slider.svelte';
 
 import Paper from '$lib/paper/Paper.svelte';
 
@@ -55,6 +57,7 @@ export {
 	Select,
 	SelectBody,
 	SelectSearch,
+	Slider,
 	Expand,
 	Table,
 	List,
@@ -71,5 +74,7 @@ export type {
 	SelectFilter,
 	SelectOption,
 	SelectOptionSnippetState,
-	SelectValue
+	SelectValue,
+	SliderRange,
+	SliderValue
 };
