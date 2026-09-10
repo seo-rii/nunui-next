@@ -13,6 +13,24 @@
 	} = $props();
 
 	const config = getContext<{ vibrate: boolean }>('config');
+	const scrollableOverflowValues = new Set(['auto', 'scroll', 'overlay']);
+
+	const findVerticalScrollParent = (
+		target: EventTarget | null,
+		boundary: HTMLElement
+	): HTMLElement | null => {
+		if (!(target instanceof Element)) return null;
+
+		for (let node: Element | null = target; node && node !== boundary; node = node.parentElement) {
+			if (!(node instanceof HTMLElement)) continue;
+			const { overflowY } = getComputedStyle(node);
+			if (node.scrollHeight > node.clientHeight + 1 && scrollableOverflowValues.has(overflowY)) {
+				return node;
+			}
+		}
+
+		return null;
+	};
 
 	let delta = $state(0),
 		dx = $state(0);
@@ -65,6 +83,8 @@
 		if (!panel) return;
 		let from = 0,
 			fx = 0,
+			lastY = 0,
+			scrollParent: HTMLElement | null = null,
 			run = false,
 			vib = false;
 		const handlers = [
@@ -75,6 +95,8 @@
 				const { top, left } = panel.getBoundingClientRect();
 				from = clientY - top;
 				fx = clientX - left;
+				lastY = clientY;
+				scrollParent = findVerticalScrollParent(e.target, panel);
 				run = true;
 				vib = false;
 			}),
@@ -82,11 +104,17 @@
 				if (!panel) return;
 				e.stopPropagation();
 				if (!run) return;
+				const { clientY, clientX } = e.touches[0];
+				const moveY = clientY - lastY;
+				lastY = clientY;
+				if (scrollParent && (moveY < 0 || (moveY > 0 && scrollParent.scrollTop > 0))) {
+					run = false;
+					return;
+				}
 				if (panel.scrollTop > 0) {
 					run = false;
 					return;
 				}
-				const { clientY, clientX } = e.touches[0];
 				const { top, left } = panel.getBoundingClientRect();
 				if (delta + clientY - top - from > 0) e.preventDefault();
 				delta = Math.max(0, delta + clientY - top - from);
